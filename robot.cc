@@ -82,3 +82,5 @@ std::ostream& operator<<(std::ostream& os, const Robot_Com& robot)
 	
 	return os; 
 }
+
+//test du git
