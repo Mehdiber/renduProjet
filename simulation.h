@@ -12,7 +12,7 @@ using gisement::Gisement;
 
 struct varglo
 {
-	int mode = 0;
+	int mode;
 	double nbG, nbB, nbP, nbF, nbT, nbC;
 	double whichBase = 0;
 
@@ -24,7 +24,7 @@ struct varglo
 namespace simulation
 {
 	void Lecture(const std::string &filename);
-	void Ecriture(const std::string &filename);
+	void Ecriture(varglo abc, const std::string &filename);
 
 	void assignLine(varglo& abc, std::vector<std::string>m);
 	void assignCase0(varglo& abc, std::vector<std::string>m);

@@ -47,7 +47,7 @@ void simulation::Lecture(const std::string &filename)
 	else
 		cout << "error reading file" << endl;
 }
-
+/*
 void simulation::Ecriture(varglo abc, const std::string &filename)
 {
 	std::ofstream ofs(filename);
@@ -65,7 +65,7 @@ void simulation::Ecriture(varglo abc, const std::string &filename)
 
 	ofs.close();
 }
-
+*/
 void simulation::assignLine(varglo &abc, vector<string> vs)
 {
 	switch (abc.mode)
@@ -136,7 +136,7 @@ void simulation::assignCase2(varglo &abc, std::vector<std::string> vs)
 
 	if (abc.nbC == 0)
 	{
-		cout << message::missing_robot_communication(b.p.x, b.p.y);
+		cout << message::missing_robot_communication(b.getPoint().x, b.getPoint().y);
 		exit(EXIT_FAILURE);
 	}
 
@@ -154,7 +154,7 @@ void simulation::assignCase3(varglo &abc, std::vector<std::string> vs)
 	}
 	else
 	{
-
+		
 		Robot_Prosp rP;
 		rP.setUID(rP, stod(vs[0]));
 		abc.Bases[abc.whichBase].base::Base::add_prospecteur(rP);
@@ -215,7 +215,7 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 		{
 			if (abc.Bases[i].is_valid() == false)
 			{
-				cout << message::missing_robot_communication(abc.Bases[i].p.x, abc.Bases[i].p.y);
+				cout << message::missing_robot_communication(abc.Bases[i].getPoint().x, abc.Bases[i].getPoint().y);
 				exit(EXIT_FAILURE);
 			}
 			abc.Bases[i].check_uids();
@@ -245,7 +245,7 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 						continue;
 					if (base::Base::intersection(abc.Bases[i], abc.Bases[j]) == true)
 					{
-						cout << message::base_superposition(abc.Bases[i].p.x, abc.Bases[i].p.y, abc.Bases[j].p.x, abc.Bases[j].p.y);
+						cout << message::base_superposition(abc.Bases[i].getPoint().x, abc.Bases[i].getPoint().y, abc.Bases[j].getPoint().x, abc.Bases[j].getPoint().y);
 						exit(EXIT_FAILURE);
 					}
 				}
@@ -255,9 +255,9 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 			{
 				for (unsigned int j = 0; j < abc.Gisements.size(); j++)
 				{
-					if (geomod::intersect(abc.Bases[i].p, rayon_base, abc.Gisements[j].centre, abc.Gisements[j].rayon) == true)
+					if (geomod::intersect(abc.Bases[i].getPoint(), rayon_base, abc.Gisements[j].centre, abc.Gisements[j].rayon) == true)
 					{
-						cout << message::base_field_superposition(abc.Bases[i].p.x, abc.Bases[i].p.y, abc.Gisements[j].centre.x, abc.Gisements[j].centre.y);
+						cout << message::base_field_superposition(abc.Bases[i].getPoint().x, abc.Bases[i].getPoint().y, abc.Gisements[j].centre.x, abc.Gisements[j].centre.y);
 						exit(EXIT_FAILURE);
 					}
 				}

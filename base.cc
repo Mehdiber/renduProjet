@@ -7,6 +7,7 @@ using namespace std;
 
 base::Base::Base(const geomod::Point &coord) : p(coord)
 {
+	
 }
 
 void base::Base::add_UID(double arg1)
@@ -27,11 +28,14 @@ void base::Base::add_prospecteur(const Robot_Prosp &prosp)
 
 	if (it != prospecteurs.end())
 	{
-		cout << message::identical_robot_uid(prosp.uid);
+		cout << message::identical_robot_uid(prosp.getUID());
 		exit(EXIT_FAILURE);
 	}
+	//prosp.setUID(
 	else
+	{
 		prospecteurs.push_back(prosp);
+	}
 }
 
 void base::Base::add_transport(const Robot_Trans &trans)
@@ -42,7 +46,7 @@ void base::Base::add_transport(const Robot_Trans &trans)
 
 	if (it != transporteurs.end())
 	{
-		cout << message::identical_robot_uid(trans.uid);
+		cout << message::identical_robot_uid(trans.getUID());
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -57,7 +61,7 @@ void base::Base::add_foreur(const Robot_For &foreur)
 
 	if (it != foreurs.end())
 	{
-		cout << message::identical_robot_uid(foreur.uid);
+		cout << message::identical_robot_uid(foreur.getUID());
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -77,7 +81,7 @@ void base::Base::add_communicateur(const Robot_Com &com)
 
 	if (it != communicateurs.end())
 	{
-		cout << message::identical_robot_uid(com.uid);
+		cout << message::identical_robot_uid(com.getUID());
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -104,8 +108,8 @@ bool base::Base::is_valid() const
 
 void base::Base::check_uids() const
 {
-	int i(0);
-	int j(0);
+	unsigned int i(0);
+	unsigned int j(0);
 	while (i < UIDs.size()) //for() serait plus simple mais j' avais des bugs sur Geany
 	{
 		while (j < UIDs.size())
@@ -146,7 +150,7 @@ std::vector<Robot_Com> base::Base::getCommunicateurs() const
 {
 	return communicateurs;
 }
-
+/*
 std::ostream &operator<<(std::ostream &os, const base::Base &base)
 {
 	os << base.p.x << " ";
@@ -173,3 +177,4 @@ std::ostream &operator<<(std::ostream &os, const base::Base &base)
 		os << communicateur;
 	return os;
 }
+*/
