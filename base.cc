@@ -159,6 +159,7 @@ std::vector<Robot_Com> base::Base::getCommunicateurs() const
 {
 	return communicateurs;
 }
+
 /*
 std::ostream &operator<<(std::ostream &os, const base::Base &base)
 {

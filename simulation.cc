@@ -330,6 +330,184 @@ bool simulation::to_bool(string str)
 	return b;
 }
 
-void simulation::updateVoisin(base::Base B1, base::Base B2)
+
+void simulation::sim(varglo abc)
 {
+	//a optimiser:
+	///algo de forage
+	///algo de transport
+	///algo de placement des robots_com
+	///importance des gisements
+	
+	for(unsigned int i = 0; i < abc.Bases.size(); i++)
+	{
+		for(unsigned int j = 0; j < abc.Bases.size(); j++)
+		{
+			updateVoisin(abc.Bases[i], abc.Bases[j]);       //chaque robot update son vecteur voisinUIDs.
+		}
+		//connexion(taB[i]) //pour determiner si les robots doivent etre en AUTO ou REMOTE //+interconnexion?
+		//maintenance(taB[i])       
+		//creation(taB[i])      
+		//update_remote(taB[i].robots)       
+		//update_autonomous(taB[i].robots)
+	}
+			
+	     
+	for(unsigned int i = 0; i < abc.Bases.size(); i++)
+	{
+		if(abc.Bases[i].getRessource() <= 0)
+			abc.Bases.erase(abc.Bases.begin()+i); 
+	}
+}
+///P F T C
+
+void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 sauvegardent les UIDs des robots de B2 rencontres
+{
+	for(unsigned int i = 0; i < B1.getProspecteurs().size(); i++)
+	{
+		for(unsigned int j = 0; j < B2.getProspecteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
+				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getForeurs()[j].getUID());
+				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
+				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
+				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+			}
+		}
+	}
+	
+	
+	for(unsigned int i = 0; i < B1.getForeurs().size(); i++)
+	{
+		for(unsigned int j = 0; j < B2.getProspecteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
+				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getForeurs()[j].getUID());
+				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
+				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
+				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+			}
+		}
+	}
+	
+	
+	for(unsigned int i = 0; i < B1.getTransporteurs().size(); i++)
+	{
+		for(unsigned int j = 0; j < B2.getProspecteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
+				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getForeurs()[j].getUID());
+				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
+				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
+				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+			}
+		}
+	}
+	
+	
+	
+	for(unsigned int i = 0; i < B1.getCommunicateurs().size(); i++)
+	{
+		for(unsigned int j = 0; j < B2.getProspecteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
+				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getForeurs()[j].getUID());
+				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
+				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+			}
+		}
+		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
+		{
+			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
+			{
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
+				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+			}
+		}
+	}
 }

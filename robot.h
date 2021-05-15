@@ -15,6 +15,7 @@ class Robot
 		double uid;
 		double dp;
 		bool atteint;
+		std::vector<std::vector<double> >voisinUIDs; //voisins[0][2] --> UID du troisieme voisin appartenant a la premiere base.
 
 	public :
 		geomod::Point getPoint() const;
@@ -27,6 +28,8 @@ class Robot
 		void setDp(Robot& r, double arg1) const;
 		bool getAtteint() const;
 		void setAtteint(Robot& r, bool arg1) const;
+		
+		void addVoisinUID(Robot& r, double arg1, double arg2);
 };
 
 class Robot_Prosp : public Robot

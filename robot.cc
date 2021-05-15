@@ -87,6 +87,11 @@ void Robot_Trans::setRetour(Robot_Trans& r, bool arg1) const
 {
 	r.retour = arg1;
 }
+
+void Robot::addVoisinUID(Robot& r, double arg1, double arg2)
+{
+	voisinUIDs[arg1].push_back(arg2);
+}
 //soit tout public, soit faire les getters au lieu d'appeler des attributs protected.
 
 /* 

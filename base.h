@@ -23,6 +23,7 @@ namespace base
 			std::vector<double> UIDs;
 			double ressource;
 			
+			
 		public:
 			Base(const geomod::Point& coord);
 			
@@ -40,6 +41,7 @@ namespace base
 			static bool intersection(Base A, Base B); //geomod::intersect ne suffit pas?
 			geomod::Point getPoint() const;
 
+			//getters des vecteurs:
 			std::vector<Robot_Prosp> getProspecteurs() const;
 			std::vector<Robot_For> getForeurs() const;
 			std::vector<Robot_Trans> getTransporteurs() const;
@@ -47,6 +49,8 @@ namespace base
 			
 			double getRessource() const;
 			void setRessource(Base& b, double arg1) const;
+			
+			double BID; //id de base pour mieux organiser les listes des voisins dans les robots.
 			
 	};
 }

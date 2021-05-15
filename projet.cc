@@ -25,15 +25,9 @@ int main(int argc, char *argv[])
 
     geomod::setter(dim_max);
 	simulation::Lecture(s);
-	/*
-	geomod::Point a(360, -200);
-	geomod::Point b(370, -200);
-
-	if(geomod::areEqual(a, b)==true)
-		cout<<"equal"<<endl;
-	else
-		cout<<"not equal"<<endl;
-		*/
+	
+	//while(true)
+	//simulation::sim();
 
 	return 0;
 }

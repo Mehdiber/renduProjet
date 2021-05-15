@@ -36,7 +36,10 @@ namespace simulation
 	void assignCase6(varglo& abc, std::vector<std::string>m);
 
 	void addGisement(double x, double y, double rayon, double capacite);
+	
+	void sim(varglo abc);
 	void updateVoisin(base::Base B1, base::Base B2);
+	
 	
 	bool to_bool(std::string str);
 }
