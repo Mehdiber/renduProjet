@@ -10,8 +10,9 @@ namespace gisement
 {
     class Gisement
     {
-		public:
+		public: //a encapsuler aussi???
 			geomod::Point centre;
+			Gisement()=default;
 			Gisement(double arg1, double arg2);
 			double x;
 			double y;

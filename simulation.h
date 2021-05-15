@@ -37,6 +37,8 @@ namespace simulation
 
 	void addGisement(double x, double y, double rayon, double capacite);
 	void updateVoisin(base::Base B1, base::Base B2);
+	
+	bool to_bool(std::string str);
 }
 
 #endif

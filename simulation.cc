@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -127,7 +128,8 @@ void simulation::assignCase2(varglo &abc, std::vector<std::string> vs)
 	geomod::Point p(stod(vs[0]), stod(vs[1]));
 
 	base::Base b(p);
-	//cout<<"b.p.x: "<<b.getPoint().x<<"\t b.p.y: "<<b.getPoint().y<<"\n";
+	b.setRessource(b, stod(vs[2]));
+	
 	abc.Bases.push_back(b);
 	abc.nbP = stod(vs[3]);
 	abc.nbF = stod(vs[4]);
@@ -156,7 +158,28 @@ void simulation::assignCase3(varglo &abc, std::vector<std::string> vs)
 	{
 		
 		Robot_Prosp rP;
+		//uid dp x y xb yb atteint retour found xg yg rayong capaciteg 
 		rP.setUID(rP, stod(vs[0]));
+		rP.setDp(rP, stod(vs[1]));
+		geomod::Point p(stod(vs[2]),stod(vs[3]));
+		rP.setPoint(rP, p);
+		geomod::Point but(stod(vs[4]), stod(vs[5]));
+		rP.setBut(rP, but);
+		rP.setAtteint(rP, to_bool(vs[6]));
+		rP.setRetour(rP, stod(vs[7]));
+		rP.setFound(rP, to_bool(vs[8]));
+		
+		if(rP.getFound()==true)
+		{
+			gisement::Gisement g;
+			geomod::Point gCentre(stod(vs[9]),stod(vs[10]));
+			g.centre = gCentre;
+			g.rayon = stod(vs[11]);
+			g.capacite = stod(vs[12]);
+			
+			rP.setGisementFound(rP, g);
+		}
+		
 		abc.Bases[abc.whichBase].base::Base::add_prospecteur(rP);
 		abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 		abc.nbP--;
@@ -175,6 +198,15 @@ void simulation::assignCase4(varglo &abc, std::vector<std::string> vs)
 	{
 		Robot_For rF;
 		rF.setUID(rF, stod(vs[0]));
+		
+		rF.setDp(rF, stod(vs[1]));
+		geomod::Point p(stod(vs[2]),stod(vs[3]));
+		rF.setPoint(rF, p);
+		geomod::Point but(stod(vs[4]), stod(vs[5]));
+		rF.setBut(rF, but);
+		rF.setAtteint(rF, to_bool(vs[6]));
+		
+		
 		abc.Bases[abc.whichBase].base::Base::add_foreur(rF);
 		abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 		abc.nbF--;
@@ -192,6 +224,15 @@ void simulation::assignCase5(varglo &abc, std::vector<std::string> vs)
 	{
 		Robot_Trans rT;
 		rT.setUID(rT, stod(vs[0]));
+		
+		rT.setDp(rT, stod(vs[1]));
+		geomod::Point p(stod(vs[2]),stod(vs[3]));
+		rT.setPoint(rT, p);
+		geomod::Point but(stod(vs[4]), stod(vs[5]));
+		rT.setBut(rT, but);
+		rT.setAtteint(rT, to_bool(vs[6]));
+		rT.setRetour(rT, stod(vs[7]));
+		
 		abc.Bases[abc.whichBase].base::Base::add_transport(rT);
 		abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 
@@ -203,8 +244,14 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 {
 	Robot_Com rC;
 	rC.setUID(rC, stod(vs[0]));
+	
+	rC.setDp(rC, stod(vs[1]));
 	geomod::Point po(stod(vs[2]), stod(vs[3]));
 	rC.setPoint(rC, po);
+	geomod::Point but(stod(vs[4]), stod(vs[5]));
+	rC.setBut(rC, but);
+	rC.setAtteint(rC, to_bool(vs[6]));
+	
 	abc.Bases[abc.whichBase].base::Base::add_communicateur(rC);
 	abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 	abc.nbC--;
@@ -272,6 +319,15 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 			abc.whichBase++;
 		}
 	}
+}
+
+bool simulation::to_bool(string str)
+{
+	transform(str.begin(), str.end(), str.begin(), ::tolower);
+	istringstream is(str);
+	bool b;
+	is >> boolalpha >> b;
+	return b;
 }
 
 void simulation::updateVoisin(base::Base B1, base::Base B2)

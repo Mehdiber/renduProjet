@@ -131,6 +131,15 @@ bool base::Base::intersection(Base A, Base B)
 	return geomod::intersect(A.p, rayon_base, B.p, rayon_base);
 }
 
+double base::Base::getRessource() const
+{
+	return ressource;
+}
+void base::Base::setRessource(Base& b, double arg1) const
+{
+	b.ressource = arg1;
+}
+
 std::vector<Robot_Prosp> base::Base::getProspecteurs() const
 {
 	return prospecteurs;

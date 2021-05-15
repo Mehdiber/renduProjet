@@ -44,6 +44,10 @@ namespace base
 			std::vector<Robot_For> getForeurs() const;
 			std::vector<Robot_Trans> getTransporteurs() const;
 			std::vector<Robot_Com> getCommunicateurs() const;
+			
+			double getRessource() const;
+			void setRessource(Base& b, double arg1) const;
+			
 	};
 }
 

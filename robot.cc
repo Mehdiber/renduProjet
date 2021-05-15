@@ -7,11 +7,6 @@
 using namespace std;
 
 
-bool Robot::getBut() const
-{
-	return but;
-}
-
 geomod::Point Robot::getPoint() const
 {
     return p;
@@ -21,9 +16,13 @@ void Robot::setPoint(Robot& r, geomod::Point arg1) const
     r.p = arg1;
 }
 
-geomod::Point Robot::getDest() const
+geomod::Point Robot::getBut() const
 {
-	return dest;
+	return but;
+}
+void Robot::setBut(Robot& r, geomod::Point arg1) const
+{
+	r.but = arg1;
 }
 
 double Robot::getUID() const
@@ -39,15 +38,55 @@ double Robot::getDp() const
 {
 	return dp;
 }
+void Robot::setDp(Robot& r, double arg1) const
+{
+	r.dp = arg1;	
+}
 
 bool Robot::getAtteint() const
 {
 	return atteint;
 }
+void Robot::setAtteint(Robot& r, bool arg1) const
+{
+	r.atteint = arg1;
+}
 
+bool Robot_Prosp::getRetour() const
+{
+	return retour;
+}
+void Robot_Prosp::setRetour(Robot_Prosp& r, bool arg1) const
+{
+	r.retour = arg1;
+}
 
+bool Robot_Prosp::getFound() const
+{
+	return found;
+}
+void Robot_Prosp::setFound(Robot_Prosp& r, bool arg1) const
+{
+	r.found = arg1;
+}
 
+gisement::Gisement Robot_Prosp::getGisementFound() const
+{
+	return gisementFound;
+}
+void Robot_Prosp::setGisementFound(Robot_Prosp& r, gisement::Gisement arg1) const
+{
+	r.gisementFound = arg1;
+}
 
+bool Robot_Trans::getRetour() const
+{
+	return retour;
+}
+void Robot_Trans::setRetour(Robot_Trans& r, bool arg1) const
+{
+	r.retour = arg1;
+}
 //soit tout public, soit faire les getters au lieu d'appeler des attributs protected.
 
 /* 
