@@ -38,7 +38,7 @@ protected:
 	void t_link_handler();
 	void t_range_handler();
 
-  Gtk::Box Box, Boutons_Box, m_Box_Top, m_Box_Bottom, m_Box_toggle;
+  Gtk::Box Box, Gen_Box, Boutons_Box, m_Box_Top, m_Box_Bottom, m_Box_toggle;
   Gtk::Frame Gen, tgl;
   //~ MyArea              m_Area;
   Gtk::Button exit, start, open, step, save, t_link, t_range; 
