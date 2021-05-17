@@ -3,24 +3,25 @@
 
 #include <gtkmm.h>
 #include <cairomm/context.h>
-#include <graphic.h>
+#include <iostream>
+//~ #include <graphic.h>
 
-class MyArea : public Gtk::DrawingArea
-{
-public:
-  MyArea();
-  virtual ~MyArea();
-  void clear();
-  void draw();
+//~ class MyArea : public Gtk::DrawingArea
+//~ {
+//~ public:
+  //~ MyArea();
+  //~ virtual ~MyArea();
+  //~ void clear();
+  //~ void draw();
 
-protected:
-  //Override default signal handler:
-  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+//~ protected:
+  //~ //Override default signal handler:
+  //~ bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
   
-private:
-  bool empty;
-  void refresh();
-};
+//~ private:
+  //~ bool empty;
+  //~ void refresh();
+//~ };
 
 
 class MyEvent : public Gtk::Window
@@ -37,10 +38,10 @@ protected:
 	void t_link_handler();
 	void t_range_handler();
 
-  Gtk::Box , Boutons, m_Box_Top, m_Box_Bottom, m_Box_toggle;
-  Gtk::Frame général, tgl;
-  MyArea              m_Area;
-  Gtk::Button open,save,exit,start,step,t_link,t_range;
+  Gtk::Box Box, Boutons_Box, m_Box_Top, m_Box_Bottom, m_Box_toggle;
+  Gtk::Frame Gen, tgl;
+  //~ MyArea              m_Area;
+  Gtk::Button exit, start, open, step, save, t_link, t_range; 
 private:
 	void draw();
 };
