@@ -3,6 +3,7 @@
 
 MyEvent::MyEvent() :
 Box(Gtk::ORIENTATION_VERTICAL,10),
+Gen_Box(Gtk::ORIENTATION_VERTICAL,5),
 Boutons_Box(Gtk::ORIENTATION_VERTICAL, 2),
 m_Box_Top(Gtk::ORIENTATION_VERTICAL, 0),
 m_Box_Bottom(Gtk::ORIENTATION_HORIZONTAL,5),
@@ -17,20 +18,31 @@ t_link("Toggle link"),
 t_range("Toggle range")
 
 {
-tgl.add(m_Box_toggle);
-m_Box_toggle.add(t_link);
-m_Box_toggle.add(t_range);
-tgl.set_label("Toggle display");
+add(Box);
 
+Box.add(m_Box_Top);
+Box.add(m_Box_Bottom);
+// ajouter egn dans box top et tgl dans box top
+// creeer nouvelle box glo pour les boutons ou je vais incorporer toggle et boutons
 
+m_Box_Top.add(Gen);
 Gen.add(Boutons_Box);
 Boutons_Box.add(exit);
 Boutons_Box.add(start);
 Boutons_Box.add(open);
 Boutons_Box.add(step);
 Boutons_Box.add(save);
-
 Gen.set_label("Général");
+
+
+tgl.add(m_Box_toggle);
+m_Box_Top.add(tgl);
+m_Box_toggle.add(t_link);
+m_Box_toggle.add(t_range);
+tgl.set_label("Toggle display");
+
+
+
 
 exit.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::exit_handler) );
 open.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::open_handler) );
