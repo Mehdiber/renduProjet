@@ -1,33 +1,48 @@
-#include "simulation.h"
+//#include "simulation.h"
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <string>
+//#include <iostream>
+//#include <vector>
+//#include <string>
+//#include <fstream>
+//#include <string>
 
-using namespace std;
+//using namespace std;
 
 
-int main(int argc, char *argv[])
+//int main(int argc, char *argv[])
+//{
+//	vector<string> argList;
+//    for(int i=1;i<argc;i++)
+//        argList.push_back(argv[i]);
+
+//    if(argList.size()!=1)
+//    {
+//		cout<<"bad argument(s)"<<endl;
+//		exit(EXIT_FAILURE);
+//	}
+
+//    string s = argList[0];
+
+//    geomod::setter(dim_max);
+//	simulation::Lecture(s);
+
+//	//while(true)
+//	//simulation::sim();
+
+//	return 0;
+//}
+
+#include "gui.h"
+#include <gtkmm/application.h>
+#include <gtkmm/window.h>
+
+int main(int argc, char** argv)
 {
-	vector<string> argList;
-    for(int i=1;i<argc;i++)
-        argList.push_back(argv[i]);
+   auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
 
-    if(argList.size()!=1)
-    {
-		cout<<"bad argument(s)"<<endl;
-		exit(EXIT_FAILURE);
-	}
+   MyEvent eventWindow;
+   eventWindow.set_default_size(300, 200);
+   eventWindow.set_resizable(false);
 
-    string s = argList[0];
-
-    geomod::setter(dim_max);
-	simulation::Lecture(s);
-	
-	//while(true)
-	//simulation::sim();
-
-	return 0;
+   return app->run(eventWindow);
 }
