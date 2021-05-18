@@ -42,6 +42,20 @@ namespace simulation
 	
 	
 	bool to_bool(std::string str);
+	
+	void connexion(base::Base B1);
+
+	void subConnexion(base::Base B, double uid);
+	
+	void maintenance(base::Base B1);    
+	void creation(base::Base B1);
+	void updateRemote(base::Base B1);
+	void updateAutonomous(base::Base B1);
+	
+	double generateUID(base::Base B1);
+	
+	void move(Robot& r);
+	
 }
 
 #endif

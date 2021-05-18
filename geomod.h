@@ -36,6 +36,7 @@ namespace geomod
 	bool areEqual(Point A, Point B);
 	bool inCircle(Point A, Point B, double r);
 	bool intersect(Point A, double r1, Point B, double r2);
+	bool overlap(Point A, Point B);
 }
 
 #endif

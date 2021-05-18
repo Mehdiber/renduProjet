@@ -31,7 +31,7 @@ void base::Base::add_prospecteur(const Robot_Prosp &prosp)
 		cout << message::identical_robot_uid(prosp.getUID());
 		exit(EXIT_FAILURE);
 	}
-	//prosp.setUID(
+	
 	else
 	{
 		prospecteurs.push_back(prosp);
@@ -88,9 +88,9 @@ void base::Base::add_communicateur(const Robot_Com &com)
 		communicateurs.push_back(com);
 }
 
-double base::Base::get_UID(unsigned int arg1) const
+std::vector<double> base::Base::getUIDs() const
 {
-	return UIDs[arg1];
+	return UIDs;
 }
 
 bool base::Base::is_valid() const
@@ -131,15 +131,6 @@ bool base::Base::intersection(Base A, Base B)
 	return geomod::intersect(A.p, rayon_base, B.p, rayon_base);
 }
 
-double base::Base::getRessource() const
-{
-	return ressource;
-}
-void base::Base::setRessource(Base& b, double arg1) const
-{
-	b.ressource = arg1;
-}
-
 std::vector<Robot_Prosp> base::Base::getProspecteurs() const
 {
 	return prospecteurs;
@@ -160,6 +151,51 @@ std::vector<Robot_Com> base::Base::getCommunicateurs() const
 	return communicateurs;
 }
 
+double base::Base::getRessource() const
+{
+	return ressource;
+}
+void base::Base::setRessource(Base& b, double arg1) const
+{
+	b.ressource = arg1;
+}
+
+double base::Base::getBID() const
+{
+	return BID;
+}
+void base::Base::setBID(Base& b, double arg1) const
+{
+	b.BID = arg1;
+}
+
+void base::Base::setConnectionStatus(Base& b, double arg1, double arg2) const
+{
+	b.connectionStatus[arg1].push_back(arg2);
+}
+double base::Base::getConnectionStatus(double arg1, double arg2) const
+{
+	return connectionStatus[arg1][arg2];
+}
+
+Robot& base::Base::searchByUID(double uid)
+{
+	for(unsigned int i = 0; i < prospecteurs.size(); i++)
+		if(prospecteurs[i].getUID()==uid)
+			return prospecteurs[i];
+			
+	for(unsigned int i = 0; i < foreurs.size(); i++)
+		if(foreurs[i].getUID()==uid)
+			return foreurs[i];
+			
+	for(unsigned int i = 0; i < transporteurs.size(); i++)
+		if(transporteurs[i].getUID()==uid)
+			return transporteurs[i];
+			
+	for(unsigned int i = 0; i < communicateurs.size(); i++)
+		if(communicateurs[i].getUID()==uid)
+			return communicateurs[i];
+}
 /*
 std::ostream &operator<<(std::ostream &os, const base::Base &base)
 {

@@ -129,6 +129,8 @@ void simulation::assignCase2(varglo &abc, std::vector<std::string> vs)
 
 	base::Base b(p);
 	b.setRessource(b, stod(vs[2]));
+	b.setBID(b, abc.Bases.size());
+	
 	
 	abc.Bases.push_back(b);
 	abc.nbP = stod(vs[3]);
@@ -331,7 +333,7 @@ bool simulation::to_bool(string str)
 }
 
 
-void simulation::sim(varglo abc)
+void simulation::sim(varglo abc) //theoriquement au lieu de abc ca doit etre Bases.
 {
 	//a optimiser:
 	///algo de forage
@@ -345,11 +347,12 @@ void simulation::sim(varglo abc)
 		{
 			updateVoisin(abc.Bases[i], abc.Bases[j]);       //chaque robot update son vecteur voisinUIDs.
 		}
-		//connexion(taB[i]) //pour determiner si les robots doivent etre en AUTO ou REMOTE //+interconnexion?
-		//maintenance(taB[i])       
-		//creation(taB[i])      
-		//update_remote(taB[i].robots)       
-		//update_autonomous(taB[i].robots)
+		
+		simulation::connexion(abc.Bases[i]); //pour determiner si les robots doivent etre en AUTO ou REMOTE //+interconnexion?
+		simulation::maintenance(abc.Bases[i]);    
+		simulation::creation(abc.Bases[i]);  
+		simulation::updateRemote(abc.Bases[i]); //(taB[i].robots)
+		simulation::updateAutonomous(abc.Bases[i]); //(taB[i].robots)
 	}
 			
 	     
@@ -361,7 +364,7 @@ void simulation::sim(varglo abc)
 }
 ///P F T C
 
-void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 sauvegardent les UIDs des robots de B2 rencontres
+void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 sauvegardent les UIDs des robots de B2 rencontres. How bout rewriting it with B.searchByUID()?
 {
 	for(unsigned int i = 0; i < B1.getProspecteurs().size(); i++)
 	{
@@ -369,32 +372,28 @@ void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 s
 		{
 			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
-				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.getBID(), B2.getProspecteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getForeurs()[j].getUID());
-				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.getBID(), B2.getForeurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
-				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.getBID(), B2.getTransporteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getProspecteurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
-				//B1.getProspecteurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+				B1.getProspecteurs()[i].addVoisinUID(B1.getProspecteurs()[i], B2.getBID(), B2.getCommunicateurs()[j].getUID());
 			}
 		}
 	}
@@ -406,32 +405,28 @@ void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 s
 		{
 			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
-				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.getBID(), B2.getProspecteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getForeurs()[j].getUID());
-				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.getBID(), B2.getForeurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
-				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.getBID(), B2.getTransporteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getForeurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
-				//B1.getForeurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+				B1.getForeurs()[i].addVoisinUID(B1.getForeurs()[i], B2.getBID(), B2.getCommunicateurs()[j].getUID());
 			}
 		}
 	}
@@ -443,32 +438,28 @@ void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 s
 		{
 			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
-				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.getBID(), B2.getProspecteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getForeurs()[j].getUID());
-				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.getBID(), B2.getForeurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
-				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.getBID(), B2.getTransporteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getTransporteurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
-				//B1.getTransporteurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+				B1.getTransporteurs()[i].addVoisinUID(B1.getTransporteurs()[i], B2.getBID(), B2.getCommunicateurs()[j].getUID());
 			}
 		}
 	}
@@ -481,33 +472,161 @@ void simulation::updateVoisin(base::Base B1, base::Base B2) //les robots de B1 s
 		{
 			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getProspecteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getProspecteurs()[j].getUID());
-				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getProspecteurs()[j].getUID());
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.getBID(), B2.getProspecteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getForeurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getForeurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getForeurs()[j].getUID());
-				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getForeurs()[j].getUID());
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.getBID(), B2.getForeurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getTransporteurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getTransporteurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getTransporteurs()[j].getUID());
-				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getTransporteurs()[j].getUID());
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.getBID(), B2.getTransporteurs()[j].getUID());
 			}
 		}
 		for(unsigned int j = 0; j < B2.getCommunicateurs().size(); j++)
 		{
 			if(geomod::inCircle(B1.getCommunicateurs()[i].getPoint(), B2.getCommunicateurs()[j].getPoint(), rayon_comm)==true)
 			{
-				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.BID, B2.getCommunicateurs()[j].getUID());
-				//B1.getCommunicateurs()[i].voisinUIDs[B2.BID].push_back(B2.getCommunicateurs()[j].getUID());
+				B1.getCommunicateurs()[i].addVoisinUID(B1.getCommunicateurs()[i], B2.getBID(), B2.getCommunicateurs()[j].getUID());
 			}
 		}
 	}
 }
+
+void simulation::connexion (base::Base B1)
+{
+	double startUID;
+	
+	for(unsigned int i = 0; i < B1.getCommunicateurs().size(); i++)
+	{
+		if(B1.getPoint().x==B1.getCommunicateurs()[i].getPoint().x && B1.getPoint().y==B1.getCommunicateurs()[i].getPoint().y)
+		{
+			startUID = B1.getCommunicateurs()[i].getUID();
+			break;
+		}
+	}
+	
+	subConnexion(B1, startUID);
+}
+
+void simulation::subConnexion(base::Base B, double uid)
+{
+	if(B.searchByUID(uid).getInRange()==false)
+	{
+		B.searchByUID(uid).setInRange(B.searchByUID(uid), true); //error 
+		
+		for(unsigned int i = 0; i < B.searchByUID(uid).getVoisinUIDs()[B.getBID()].size(); i++)
+		{
+			simulation::subConnexion(B, B.searchByUID(uid).getVoisinUIDs()[B.getBID()][i]);
+		}
+	}
+}
+
+
+
+void simulation::maintenance(base::Base B1)
+{
+	for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
+	{
+		if(geomod::overlap(B1.searchByUID(B1.getUIDs()[i]).getPoint(), B1.getPoint()))
+		{
+			double x = B1.getRessource()-cost_repair*B1.searchByUID(B1.getUIDs()[i]).getDp();
+			B1.setRessource(B1, x);
+			x = 0;
+			B1.searchByUID(B1.getUIDs()[i]).setDp(B1.searchByUID(B1.getUIDs()[i]), x); 
+		}
+	}
+}
+
+
+
+void simulation::creation(base::Base B1) //test 1: creation d'un prosp par appel
+{
+	if(B1.getUIDs().size()!=max_robots)
+	{
+		Robot_Prosp r;
+		r.setPoint(r, B1.getPoint());
+		geomod::Point but;
+		but.x = B1.getPoint().x;
+		but.y = B1.getPoint().y+100; //pour qu'ils se dirigent vers le nord;
+		r.setBut(r, but);
+		r.setUID(r, generateUID(B1));
+		r.setDp(r, 0);
+		r.setAtteint(r, false);
+		r.setMode(r, 'a'); //upon creation: auto
+		r.setInRange(r, false);
+		r.setRetour(r, false);
+		r.setFound(r, false);
+		//faire des conctructeurs neat pour ca ^^^
+	}
+}
+
+void simulation::updateRemote(base::Base B1)
+{
+	for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
+	{
+		if(B1.searchByUID(B1.getUIDs()[i]).getMode()=='r')
+			move(B1.searchByUID(B1.getUIDs()[i]));
+	}
+}
+
+void simulation::updateAutonomous(base::Base B1)
+{
+	for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
+	{
+		if(B1.searchByUID(B1.getUIDs()[i]).getMode()=='a')
+			move(B1.searchByUID(B1.getUIDs()[i]));
+	}
+}
+
+double simulation::generateUID(base::Base B1) //try uids from zero to inf as long as theres no such uid in B1.UIDs
+{
+	double uid = 0;
+	bool dupli = false;
+	
+	while(true)
+	{
+		for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
+		{
+			if(uid == B1.getUIDs()[i])
+				dupli = true;
+		}
+		
+		if(dupli == false)
+			return uid;
+		else
+			uid++;
+	}
+}
+
+void simulation::move(Robot& r)
+{
+	double vx = r.getBut().x - r.getPoint().x;
+	double vy = r.getBut().y - r.getPoint().y;
+	
+	geomod::Vector v(vx, vy);
+	
+	if(geomod::vectorNorm(v, r.getPoint(), r.getBut()) < deltaD)
+	{
+		r.setPoint(r, r.getBut());
+		r.setAtteint(r, true);
+	}
+	else
+	{
+		double newX = (deltaD/geomod::vectorNorm(v, r.getPoint(), r.getBut()))*vx;
+		double newY = (deltaD/geomod::vectorNorm(v, r.getPoint(), r.getBut()))*vy;
+	
+		geomod::Point newP(newX, newY);
+	
+		r.setPoint(r, newP);
+	}	
+}
+
+
+

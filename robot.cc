@@ -11,6 +11,7 @@ geomod::Point Robot::getPoint() const
 {
     return p;
 }
+
 void Robot::setPoint(Robot& r, geomod::Point arg1) const
 {
     r.p = arg1;
@@ -88,10 +89,34 @@ void Robot_Trans::setRetour(Robot_Trans& r, bool arg1) const
 	r.retour = arg1;
 }
 
+
 void Robot::addVoisinUID(Robot& r, double arg1, double arg2)
 {
 	voisinUIDs[arg1].push_back(arg2);
 }
+std::vector<std::vector<double> > Robot::getVoisinUIDs() const
+{
+	return voisinUIDs;
+}
+
+void Robot::setMode(Robot& r, char arg1) const
+{
+	r.mode = arg1;
+}
+char Robot::getMode() const
+{
+	return mode;
+}
+
+void Robot::setInRange(Robot& r, bool arg1) const
+{
+	r.inRange = arg1;
+}
+bool Robot::getInRange() const
+{
+	return inRange;
+}
+
 //soit tout public, soit faire les getters au lieu d'appeler des attributs protected.
 
 /* 

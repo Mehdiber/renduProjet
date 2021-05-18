@@ -22,7 +22,9 @@ namespace base
 			double bad_uid;
 			std::vector<double> UIDs;
 			double ressource;
+			double BID; //id de base pour mieux organiser les listes des voisins dans les robots.
 			
+			std::vector<std::vector<double> >connectionStatus; //premiere coordonnee: uid du robot, deuxieme: 0 si pas connecte, 1 si connecte.
 			
 		public:
 			Base(const geomod::Point& coord);
@@ -33,7 +35,7 @@ namespace base
 			void add_communicateur(const Robot_Com& communicateur);
 			
 			void add_UID(double arg1);
-			double get_UID(unsigned int arg1) const;
+			std::vector<double> getUIDs() const;
 			void check_uids() const;
 			double get_bad_uid() const;
 
@@ -50,7 +52,14 @@ namespace base
 			double getRessource() const;
 			void setRessource(Base& b, double arg1) const;
 			
-			double BID; //id de base pour mieux organiser les listes des voisins dans les robots.
+			double getBID() const;
+			void setBID(Base& b, double arg1) const;
+			
+			void setConnectionStatus(Base& b, double arg1, double arg2) const;
+			double getConnectionStatus(double arg1, double arg2) const;
+			
+			Robot& searchByUID(double uid);
+			
 			
 	};
 }

@@ -129,3 +129,11 @@ bool geomod::intersect(Point A, double r1, Point B, double r2)
 		return false;
 	}
 }
+
+bool geomod::overlap(Point A, Point B)
+{
+	if(A.x==B.x&&A.y==B.y)
+		return true;
+	else
+		return false;
+}
