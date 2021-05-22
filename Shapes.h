@@ -31,6 +31,7 @@ protected:
 	geomod::Point coord;
 
 	virtual void draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const = 0;
+	void flush(const Cairo::RefPtr<Cairo::Context> &cr) const;
 
 private:
 	Color color;

@@ -11,18 +11,18 @@ namespace geomod
 	{
 	public:
 		double x, y, xNorm, yNorm;
-		Point()=default;
+		Point() = default;
 		Point(double arg1, double arg2);
 	};
 
 	class Vector
 	{
-	public:	
+	public:
 		double x, y, norm;
 		Vector(double arg1, double arg2);
 	};
 
-	static double max; 
+	static double max;
 	static double epsilon_zero;
 
 	void check();
@@ -37,6 +37,8 @@ namespace geomod
 	bool inCircle(Point A, Point B, double r);
 	bool intersect(Point A, double r1, Point B, double r2);
 	bool overlap(Point A, Point B);
+
+	bool overlapBorder(Point O, double r, bool &x, bool &y);
 }
 
 #endif

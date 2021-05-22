@@ -98,8 +98,8 @@ bool geomod::areEqual(Point A, Point B)
 
 	if (n < epsilon_zero)
 	{
-	//	cout<<"n = "<<n<<" e0 = "<<epsilon_zero<<endl;
-	//	cout<<"n < e0 = true."<<endl;
+		//	cout<<"n = "<<n<<" e0 = "<<epsilon_zero<<endl;
+		//	cout<<"n < e0 = true."<<endl;
 		return true;
 	}
 	else
@@ -132,8 +132,21 @@ bool geomod::intersect(Point A, double r1, Point B, double r2)
 
 bool geomod::overlap(Point A, Point B)
 {
-	if(A.x==B.x&&A.y==B.y)
+	if (A.x == B.x && A.y == B.y)
 		return true;
 	else
 		return false;
+}
+
+bool geomod::overlapBorder(Point O, double r, bool &x, bool &y)
+{
+	x = false;
+	y = false;
+
+	if (O.xNorm + r > max || O.xNorm - r < -max)
+		x = true;
+	if (O.yNorm + r > max || O.yNorm - r < -max)
+		y = true;
+
+	return x || y;
 }

@@ -5,13 +5,25 @@
 #include <queue>
 #include "Shapes.h"
 
+struct Frame
+{
+	double xMin;
+	double xMax;
+	double yMin;
+	double yMax;
+	double asp;
+	int height;
+	int width;
+};
+
 class MyArea : public Gtk::DrawingArea
 {
 public:
 	MyArea();
 	virtual ~MyArea();
 
-	//void setFrame(/* Ajouter la frame */); // Gestion de la distorsion
+	void adjustFrame();
+	void setFrame(Frame r); // Gestion de la distorsion
 
 	void add(Drawable *drawable);
 
@@ -20,7 +32,8 @@ protected:
 	void draw_frame(const Cairo::RefPtr<Cairo::Context> &cr);
 
 private:
-	// Ajout des frames pour la distorsion.
+	Frame ref;
+	Frame current_frame;
 
 	std::queue<DrawablePtr> drawQueue;
 };
