@@ -16,7 +16,7 @@ class Robot
 		double dp;
 		bool atteint;
 		std::vector<std::vector<double> >voisinUIDs; //voisins[0][2] --> UID du troisieme voisin appartenant a la premiere base.
-		char mode; //r: remote, a: auto
+		double mode = 69; //1: remote, 0: auto
 		bool inRange; //au debut de chaque appel de connexion() FALSE, mais lorsque le "signal" issu de la base atteint le robot, ca change en TRUE
 
 	public :
@@ -35,12 +35,13 @@ class Robot
 		void addVoisinUID(Robot& r, double arg1, double arg2);
 		std::vector<std::vector<double> >getVoisinUIDs() const;
 		
-		void setMode(Robot& r, char arg1) const;
-		char getMode() const;
+		void setMode(Robot& r, double arg1) const;
+		double getMode() const;
 		
 		void setInRange(Robot& r, bool arg1) const;
 		bool getInRange() const;
 		
+		void showVoisins() const;
 		
 };
 
@@ -56,6 +57,8 @@ class Robot_Prosp : public Robot
 		double capaciteg;
 	
 	public:
+	
+	
 		bool getRetour() const;
 		void setRetour(Robot_Prosp& r, bool arg1) const;
 		//j'ajoute:

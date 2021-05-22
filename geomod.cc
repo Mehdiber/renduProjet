@@ -84,10 +84,8 @@ double geomod::vectorNorm(geomod::Vector &v, Point A, Point B)
 	normalizePoint(p);
 	v.x = p.xNorm;
 	v.y = p.yNorm;
-	//cout<<v.x<<"\t"<<v.y<<endl;
 
 	v.norm = sqrt(pow(v.x, 2) + pow(v.y, 2));
-	//cout<<v.norm<<endl;
 	return v.norm;
 }
 
@@ -98,19 +96,28 @@ bool geomod::areEqual(Point A, Point B)
 
 	if (n < epsilon_zero)
 	{
-	//	cout<<"n = "<<n<<" e0 = "<<epsilon_zero<<endl;
-	//	cout<<"n < e0 = true."<<endl;
 		return true;
 	}
 	else
 		return false;
 }
 
-bool geomod::inCircle(Point A, Point B, double r)
+bool geomod::inCircle(Point A, Point B, double r) //c correct la?
 {
 	Vector v(0, 0);
 	double n = vectorNorm(v, A, B);
 	if (n < (r - epsilon_zero))
+		return true;
+	else
+		return false;
+}
+
+bool geomod::inCircleSansNorm(Point A, Point B, double r)
+{
+	double dx = A.x-B.x;
+	double dy = A.y-B.y;
+	double d = sqrt(pow(dx, 2) + pow(dy, 2));
+	if(d <= r)
 		return true;
 	else
 		return false;
@@ -136,4 +143,33 @@ bool geomod::overlap(Point A, Point B)
 		return true;
 	else
 		return false;
+}
+
+double geomod::distance(Point A, Point B)
+{
+	return sqrt(pow((A.x-B.x), 2)+pow((A.y-B.y), 2));
+}
+
+geomod::Vector geomod::nVect(Point A, Point B)
+{
+	double xgood; 
+	double ygood;
+	double sth = 5000;
+	
+	for(int i = -1; i <= 1; i++)
+	{
+		for(int j = -1; j <= 1; j++)
+		{// cout<<"i: "<<i<<"j: "<<j<<endl;
+			geomod::Point b_copy(B.x+dim_max*2*i, B.y+dim_max*2*j);
+			if(geomod::distance(A, b_copy)<sth)
+			{
+				sth = geomod::distance(A, b_copy);
+				xgood = b_copy.x;
+				ygood = b_copy.y;
+			}
+		}
+	}
+	
+	geomod::Vector v(xgood-A.x, ygood-A.y);
+	return v;
 }

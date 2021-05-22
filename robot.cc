@@ -90,20 +90,26 @@ void Robot_Trans::setRetour(Robot_Trans& r, bool arg1) const
 }
 
 
-void Robot::addVoisinUID(Robot& r, double arg1, double arg2)
+void Robot::addVoisinUID(Robot& r, double arg1, double arg2) //na liste arg1 czyli BID wpisz arg2 czyli r.getUID()
 {
+	while(voisinUIDs.size()<arg1+1)
+	{
+		vector<double> v;
+		voisinUIDs.push_back(v);
+	}
 	voisinUIDs[arg1].push_back(arg2);
+	//cout<<"voisin added"<<endl;
 }
 std::vector<std::vector<double> > Robot::getVoisinUIDs() const
 {
 	return voisinUIDs;
 }
 
-void Robot::setMode(Robot& r, char arg1) const
+void Robot::setMode(Robot& r, double arg1) const
 {
 	r.mode = arg1;
 }
-char Robot::getMode() const
+double Robot::getMode() const
 {
 	return mode;
 }
@@ -115,6 +121,20 @@ void Robot::setInRange(Robot& r, bool arg1) const
 bool Robot::getInRange() const
 {
 	return inRange;
+}
+
+void Robot::showVoisins() const
+{
+	cout<<"flag11"<<endl;
+	cout<<voisinUIDs[0].size()<<endl; //SF
+	for(unsigned int i = 0; i < voisinUIDs.size(); i++)//how many vectors
+	{cout<<"flag12"<<endl;
+		for(unsigned int j = 0; j < voisinUIDs[i].size(); j++)//how many robots in one vector
+		{cout<<"flag13"<<endl;
+			cout<<voisinUIDs[i][j]<<" ";
+		}
+		cout<<endl;
+	}
 }
 
 //soit tout public, soit faire les getters au lieu d'appeler des attributs protected.

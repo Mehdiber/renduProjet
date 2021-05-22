@@ -108,6 +108,8 @@ bool base::Base::is_valid() const
 
 void base::Base::check_uids() const
 {
+	
+	//std::cout<<"check_uids() called"<<endl;
 	unsigned int i(0);
 	unsigned int j(0);
 	while (i < UIDs.size()) //for() serait plus simple mais j' avais des bugs sur Geany

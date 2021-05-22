@@ -19,6 +19,7 @@ namespace geomod
 	{
 	public:	
 		double x, y, norm;
+		Vector()=default;
 		Vector(double arg1, double arg2);
 	};
 
@@ -35,8 +36,13 @@ namespace geomod
 	double vectorNorm(Vector &v, Point A, Point B);
 	bool areEqual(Point A, Point B);
 	bool inCircle(Point A, Point B, double r);
+	bool inCircleSansNorm(Point A, Point B, double r);
+	
 	bool intersect(Point A, double r1, Point B, double r2);
 	bool overlap(Point A, Point B);
+	double distance(Point A, Point B);
+	
+	Vector nVect(Point A, Point B);
 }
 
 #endif

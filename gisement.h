@@ -10,14 +10,22 @@ namespace gisement
 {
     class Gisement
     {
-		public: //a encapsuler aussi???
+		private: 
 			geomod::Point centre;
-			Gisement()=default;
-			Gisement(double arg1, double arg2);
-			double x;
-			double y;
 			double rayon;
 			double capacite;
+		
+		public:
+			Gisement()=default;
+			Gisement(double arg1, double arg2, double arg3, double arg4);
+			
+			geomod::Point getPoint() const;
+			double getRayon() const;
+			void setCapacite(Gisement& G1, double arg1) const;
+			double getCapacite() const;
+			
+			
+			
 			static bool intersection_g(const Gisement& G1, const Gisement &G2);
     };
 

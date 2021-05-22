@@ -4,6 +4,9 @@
 #include "gisement.h"
 #include "geomod.h"
 #include "base.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 #include <string>
 #include <vector>
@@ -18,13 +21,14 @@ struct varglo
 
 	std::vector<gisement::Gisement> Gisements;
 	std::vector<base::Base> Bases;
-	std::vector<geomod::Point> Points;
+	//std::vector<geomod::Point> Points;
+	int iteration = 0;
 };
 
 namespace simulation
 {
 	void Lecture(const std::string &filename);
-	void Ecriture(varglo abc, const std::string &filename);
+	void Ecriture(const std::string &filename); ///-------------------------
 
 	void assignLine(varglo& abc, std::vector<std::string>m);
 	void assignCase0(varglo& abc, std::vector<std::string>m);
@@ -37,24 +41,27 @@ namespace simulation
 
 	void addGisement(double x, double y, double rayon, double capacite);
 	
-	void sim(varglo abc);
-	void updateVoisin(base::Base B1, base::Base B2);
+	void sim();
+	void updateVoisin(base::Base &B1, base::Base &B2);
 	
 	
 	bool to_bool(std::string str);
 	
-	void connexion(base::Base B1);
+	std::string to_string(bool arg1);
+	
+	void connexion(base::Base &B1);
 
-	void subConnexion(base::Base B, double uid);
+	void subConnexion(base::Base &B, double uid);
 	
-	void maintenance(base::Base B1);    
-	void creation(base::Base B1);
-	void updateRemote(base::Base B1);
-	void updateAutonomous(base::Base B1);
+	void maintenance(base::Base &B1);    
+	void creation(base::Base &B1);
+	void updateRemote(base::Base &B1);
+	void updateAutonomous(base::Base &B1);
 	
-	double generateUID(base::Base B1);
+	double generateUID(base::Base &B1);
 	
 	void move(Robot& r);
+	void control(base::Base &B1);
 	
 }
 
