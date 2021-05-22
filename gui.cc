@@ -2,6 +2,8 @@
 #include <iostream>
 #include "myarea.h"
 
+constexpr unsigned int taille_dessin = 800;
+
 MyEvent::MyEvent() : Box(Gtk::ORIENTATION_VERTICAL, 10),
 					 Gen_Box(Gtk::ORIENTATION_VERTICAL, 5),
 					 Boutons_Box(Gtk::ORIENTATION_VERTICAL, 2),
@@ -14,6 +16,7 @@ MyEvent::MyEvent() : Box(Gtk::ORIENTATION_VERTICAL, 10),
 					 open("open"),
 					 step("step"),
 					 save("save"),
+
 					 t_link("Toggle link"),
 					 t_range("Toggle range")
 
@@ -36,6 +39,7 @@ MyEvent::MyEvent() : Box(Gtk::ORIENTATION_VERTICAL, 10),
 
 	tgl.add(m_Box_toggle);
 	Gen_Box.add(tgl);
+	t_link.set_active();
 	m_Box_toggle.add(t_link);
 	m_Box_toggle.add(t_range);
 	tgl.set_label("Toggle display");
@@ -44,18 +48,27 @@ MyEvent::MyEvent() : Box(Gtk::ORIENTATION_VERTICAL, 10),
 	open.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::open_handler));
 	start.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::start_handler));
 	step.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::step_handler));
-	t_link.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::t_link_handler));
-	t_range.signal_clicked().connect(sigc::mem_fun(*this, &MyEvent::t_range_handler));
+	t_link.signal_toggled().connect(sigc::mem_fun(*this, &MyEvent::t_link_handler));
+	t_range.signal_toggled().connect(sigc::mem_fun(*this, &MyEvent::t_range_handler));
+
+	Frame ref;
+	ref.xMax = dim_max;
+	ref.xMin = -dim_max;
+	ref.yMax = dim_max;
+	ref.yMin = -dim_max;
+
+	ref.asp = (ref.xMax - ref.xMin) / (ref.yMax - ref.yMin);
+
+	ref.height = taille_dessin;
+	ref.width = ref.asp * ref.height;
 
 	m_Box_Top.pack_start(canvas);
-	canvas.set_size_request(500, 500);
+	canvas.setFrame(ref);
+	canvas.set_size_request(taille_dessin, taille_dessin);
+	canvas.queue_draw();
 
-	Drawable *circle(new Circle(geomod::Point(0, 0), Color{}, 50, false));
-	Drawable *circle1(new Circle(geomod::Point(26, 0), red, 5, true));
-	Drawable *circle2(new Circle(geomod::Point(0, 50), magenta, 10, true));
-	canvas.add(circle);
-	canvas.add(circle1);
-	canvas.add(circle2);
+	pt = geomod::Point(0, 0);
+	r = 50;
 
 	Glib::signal_idle().connect(sigc::mem_fun(*this, &MyEvent::on_idle));
 
@@ -76,7 +89,7 @@ void MyEvent::exit_handler()
 }
 void MyEvent::start_handler()
 {
-	std::cout << "test" << std::endl;
+	start_sim = !start_sim;
 }
 void MyEvent::step_handler()
 {
@@ -93,7 +106,17 @@ void MyEvent::t_range_handler()
 
 bool MyEvent::on_idle()
 {
-	std::cout << "bonjour" << std::endl;
+	if (start_sim)
+	{
+		pt.xNorm = dim_max;
+		pt.yNorm = dim_max;
+		geomod::normalizePoint(pt);
+
+		canvas.add(new Circle(pt, Color{0, 1, 0}, r, true));
+		canvas.queue_draw();
+
+		usleep(100000);
+	}
 	return is_visible();
 }
 
