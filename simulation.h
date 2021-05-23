@@ -27,7 +27,7 @@ struct varglo
 
 namespace simulation
 {
-	void Lecture(const std::string &filename);
+	varglo Lecture(const std::string &filename);
 	void Ecriture(const std::string &filename); ///-------------------------
 
 	void assignLine(varglo& abc, std::vector<std::string>m);
@@ -40,29 +40,29 @@ namespace simulation
 	void assignCase6(varglo& abc, std::vector<std::string>m);
 
 	void addGisement(double x, double y, double rayon, double capacite);
-	
+
 	void sim();
 	void updateVoisin(base::Base &B1, base::Base &B2);
-	
-	
+
+
 	bool to_bool(std::string str);
-	
+
 	std::string to_string(bool arg1);
-	
+
 	void connexion(base::Base &B1);
 
 	void subConnexion(base::Base &B, double uid);
-	
-	void maintenance(base::Base &B1);    
+
+	void maintenance(base::Base &B1);
 	void creation(base::Base &B1);
 	void updateRemote(base::Base &B1);
 	void updateAutonomous(base::Base &B1);
-	
+
 	double generateUID(base::Base &B1);
-	
+
 	void move(Robot& r);
 	void control(base::Base &B1);
-	
+
 }
 
 #endif

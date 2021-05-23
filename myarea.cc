@@ -16,9 +16,6 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 	frame_projection(cr, current_frame);
 	draw_frame(cr);
 
-	if (drawQueue.empty())
-		return true;
-
 	while (!drawQueue.empty())
 	{
 		drawQueue.front()->draw(cr);

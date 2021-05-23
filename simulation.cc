@@ -14,9 +14,8 @@ using namespace std;
 
 varglo abc;
 
-void simulation::Lecture(const std::string &filename)
+varglo simulation::Lecture(const std::string &filename)
 {
-
 	abc.mode = 0;
 
 	string l;
@@ -41,17 +40,19 @@ void simulation::Lecture(const std::string &filename)
 			}
 
 			assignLine(abc, ls);
-			
+
 			ls.clear();
 		}
 		ifs.close();
 	}
 	else
 		cout << "error reading file" << endl;
+
+	return abc;
 }
 
 void simulation::Ecriture(const std::string &filename)
-{	
+{
 	ofstream myfile;
 	myfile.open (filename, ios::out | ios::trunc);
 
@@ -60,7 +61,7 @@ void simulation::Ecriture(const std::string &filename)
 	myfile<<"# nb Gisement"<<endl;
 	myfile<<abc.Gisements.size()<<endl;
 	myfile<<"# Gisement: (x y rayon capacite)"<<endl;
-	
+
 	for(unsigned int i = 0; i < abc.Gisements.size(); i++)
 	{
 		myfile<<abc.Gisements[i].getPoint().x<<" ";
@@ -73,7 +74,7 @@ void simulation::Ecriture(const std::string &filename)
 	myfile<<abc.Bases.size()<<endl;
 
 	myfile<<"# Base: (x y res nbP nbF nbT nbC)"<<endl;
-	
+
 	for(unsigned int i = 0; i < abc.Bases.size(); i++)
 	{
 		myfile<<abc.Bases[i].getPoint().x<<" ";
@@ -84,7 +85,7 @@ void simulation::Ecriture(const std::string &filename)
 		myfile<<abc.Bases[i].getTransporteurs().size()<<" ";
 		myfile<<abc.Bases[i].getCommunicateurs().size()<<" ";
 		myfile<<endl;
-		
+
 		myfile<<"# PROSP: (uid dp x y xb yb atteint retour found xg yg rayong capaciteg)"<<endl;
 		for(unsigned int j = 0; j < abc.Bases[i].getProspecteurs().size(); j++)
 		{
@@ -97,7 +98,7 @@ void simulation::Ecriture(const std::string &filename)
 			myfile<<to_string(abc.Bases[i].getProspecteurs()[j].getAtteint()) <<" ";
 			myfile<<to_string(abc.Bases[i].getProspecteurs()[j].getRetour()) <<" ";
 			myfile<<to_string(abc.Bases[i].getProspecteurs()[j].getFound()) <<" ";
-			
+
 			if(abc.Bases[i].getProspecteurs()[j].getFound()==true)
 			{
 				myfile<<abc.Bases[i].getProspecteurs()[j].getGisementFound().getPoint().x <<" ";
@@ -108,7 +109,7 @@ void simulation::Ecriture(const std::string &filename)
 			myfile<<endl;
 		}
 		myfile<<endl;
-		
+
 		myfile<<"# FOR: (uid dp x y xb yb atteint)"<<endl;
 		for(unsigned int j = 0; j < abc.Bases[i].getForeurs().size(); j++)
 		{
@@ -122,7 +123,7 @@ void simulation::Ecriture(const std::string &filename)
 			myfile<<endl;
 		}
 		myfile<<endl;
-		
+
 		myfile<<"# TRANS: (uid dp x y xb yb atteint retour)"<<endl;
 		for(unsigned int j = 0; j < abc.Bases[i].getTransporteurs().size(); j++)
 		{
@@ -137,7 +138,7 @@ void simulation::Ecriture(const std::string &filename)
 			myfile<<endl;
 		}
 		myfile<<endl;
-		
+
 		myfile<<"# COM: (uid dp x y xb yb atteint)"<<endl;
 		for(unsigned int j = 0; j < abc.Bases[i].getCommunicateurs().size(); j++)
 		{
@@ -154,11 +155,11 @@ void simulation::Ecriture(const std::string &filename)
 	}
 
 	myfile.close();
-	
+
 	//Clear all data
 	abc.Bases.clear();
 	abc.Gisements.clear();
-	
+
 }
 
 void simulation::assignLine(varglo &abc, vector<string> vs)
@@ -220,14 +221,14 @@ void simulation::assignCase1(varglo &abc, std::vector<std::string> vs)
 void simulation::assignCase2(varglo &abc, std::vector<std::string> vs)
 {
 	//cout<<"case 2: ass_bas called"<<endl;
-	
+
 	geomod::Point p(stod(vs[0]), stod(vs[1]));
 
 	base::Base b(p);
 	b.setRessource(b, stod(vs[2]));
 	b.setBID(b, abc.Bases.size()); //le premier BID c'est 0
-	
-	
+
+
 	abc.Bases.push_back(b);
 	abc.nbP = stod(vs[3]);
 	abc.nbF = stod(vs[4]);
@@ -248,7 +249,7 @@ void simulation::assignCase2(varglo &abc, std::vector<std::string> vs)
 void simulation::assignCase3(varglo &abc, std::vector<std::string> vs)
 {
 	//cout<<"case 3: ass_p called"<<endl;
-	
+
 	if (abc.nbP == 0)
 	{
 		abc.mode++;
@@ -256,9 +257,9 @@ void simulation::assignCase3(varglo &abc, std::vector<std::string> vs)
 	}
 	else
 	{
-		
+
 		Robot_Prosp rP;
-		//uid dp x y xb yb atteint retour found xg yg rayong capaciteg 
+		//uid dp x y xb yb atteint retour found xg yg rayong capaciteg
 		rP.setUID(rP, stod(vs[0]));
 		rP.setDp(rP, stod(vs[1]));
 		geomod::Point p(stod(vs[2]),stod(vs[3]));
@@ -266,18 +267,18 @@ void simulation::assignCase3(varglo &abc, std::vector<std::string> vs)
 		geomod::Point but(stod(vs[4]), stod(vs[5]));
 		rP.setBut(rP, but);
 		rP.setAtteint(rP, to_bool(vs[6]));
-		
-		
+
+
 		rP.setRetour(rP, to_bool(vs[7]));
 		rP.setFound(rP, to_bool(vs[8]));
-		
+
 		if(rP.getFound()==true)
 		{
 			gisement::Gisement g(stod(vs[9]), stod(vs[10]), stod(vs[11]), stod(vs[12]));
-			
+
 			rP.setGisementFound(rP, g);
 		}
-		
+
 		abc.Bases[abc.whichBase].base::Base::add_prospecteur(rP);
 		abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 		abc.nbP--;
@@ -287,7 +288,7 @@ void simulation::assignCase3(varglo &abc, std::vector<std::string> vs)
 void simulation::assignCase4(varglo &abc, std::vector<std::string> vs)
 {
 	//cout<<"case 4: ass_g called"<<endl;
-	
+
 	if (abc.nbF == 0)
 	{
 		abc.mode++;
@@ -298,15 +299,15 @@ void simulation::assignCase4(varglo &abc, std::vector<std::string> vs)
 	{
 		Robot_For rF;
 		rF.setUID(rF, stod(vs[0]));
-		
+
 		rF.setDp(rF, stod(vs[1]));
 		geomod::Point p(stod(vs[2]),stod(vs[3]));
 		rF.setPoint(rF, p);
 		geomod::Point but(stod(vs[4]), stod(vs[5]));
 		rF.setBut(rF, but);
 		rF.setAtteint(rF, to_bool(vs[6]));
-		
-		
+
+
 		abc.Bases[abc.whichBase].base::Base::add_foreur(rF);
 		abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 		abc.nbF--;
@@ -324,7 +325,7 @@ void simulation::assignCase5(varglo &abc, std::vector<std::string> vs)
 	{
 		Robot_Trans rT;
 		rT.setUID(rT, stod(vs[0]));
-		
+
 		rT.setDp(rT, stod(vs[1]));
 		geomod::Point p(stod(vs[2]),stod(vs[3]));
 		rT.setPoint(rT, p);
@@ -332,7 +333,7 @@ void simulation::assignCase5(varglo &abc, std::vector<std::string> vs)
 		rT.setBut(rT, but);
 		rT.setAtteint(rT, to_bool(vs[6]));
 		rT.setRetour(rT, to_bool(vs[7]));
-		
+
 		abc.Bases[abc.whichBase].base::Base::add_transport(rT);
 		abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 
@@ -344,14 +345,14 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 {
 	Robot_Com rC;
 	rC.setUID(rC, stod(vs[0]));
-	
+
 	rC.setDp(rC, stod(vs[1]));
 	geomod::Point po(stod(vs[2]), stod(vs[3]));
 	rC.setPoint(rC, po);
 	geomod::Point but(stod(vs[4]), stod(vs[5]));
 	rC.setBut(rC, but);
 	rC.setAtteint(rC, to_bool(vs[6]));
-	
+
 	abc.Bases[abc.whichBase].base::Base::add_communicateur(rC);
 	abc.Bases[abc.whichBase].add_UID(stod(vs[0]));
 	abc.nbC--;
@@ -409,7 +410,7 @@ void simulation::assignCase6(varglo &abc, std::vector<std::string> vs)
 					}
 				}
 			}
-			
+
 			cout << message::success();
 			cout<<"message success"<<endl;
 		}
@@ -447,15 +448,15 @@ void simulation::sim() //theoriquement au lieu de abc ca doit etre Bases.
 		{
 			updateVoisin(abc.Bases[i], abc.Bases[j]); //OK
 		}
-		
+
 	simulation::connexion(abc.Bases[i]); //OK
-	simulation::maintenance(abc.Bases[i]);    
-	simulation::creation(abc.Bases[i]);   
-	simulation::updateRemote(abc.Bases[i]); 
-	simulation::updateAutonomous(abc.Bases[i]); 
+	simulation::maintenance(abc.Bases[i]);
+	simulation::creation(abc.Bases[i]);
+	simulation::updateRemote(abc.Bases[i]);
+	simulation::updateAutonomous(abc.Bases[i]);
 	}
 
-	
+
 	/* //display of voisins
 	for(unsigned int i = 0; i < abc.Bases.size(); i++) //display of voisins
 	{
@@ -463,21 +464,21 @@ void simulation::sim() //theoriquement au lieu de abc ca doit etre Bases.
 		{
 			cout<<"BID: "<<abc.Bases[i].getBID()<<" UID: "<<abc.Bases[i].searchByUID(abc.Bases[i].getUIDs()[j]).getUID()<<endl;
 			cout<<"Mode: "<<abc.Bases[i].searchByUID(abc.Bases[i].getUIDs()[j]).getMode()<<endl;
-			
+
 			for(unsigned int k = 0; k < abc.Bases[i].searchByUID(abc.Bases[i].getUIDs()[j]).getVoisinUIDs().size(); k++)
 			{
 				for(unsigned int l = 0; l < abc.Bases[i].searchByUID(abc.Bases[i].getUIDs()[j]).getVoisinUIDs()[k].size(); l++)
 				{
 					cout<<abc.Bases[i].searchByUID(abc.Bases[i].getUIDs()[j]).getVoisinUIDs()[k][l]<<" ";
-				} 
-				
+				}
+
 				cout<<endl;
 			}
 			cout<<endl;
 		}
 	}
 	*/
-	
+
 	/*  //display of modes
 	for(unsigned int j = 0; j < abc.Bases.size(); j++)
 	{
@@ -487,21 +488,21 @@ void simulation::sim() //theoriquement au lieu de abc ca doit etre Bases.
 		}
 	}
 	*/
-	     
+
 	for(unsigned int i = 0; i < abc.Bases.size(); i++)
 	{
 		if(abc.Bases[i].getRessource() <= 0)
-			abc.Bases.erase(abc.Bases.begin()+i); 
+			abc.Bases.erase(abc.Bases.begin()+i);
 	}
 }
 ///P F T C
 
 void simulation::updateVoisin(base::Base &B1, base::Base &B2)
-{	
+{
 	for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
 	{
 		for(unsigned int j = 0; j < B2.getUIDs().size(); j++)
-		{	
+		{
 			if(geomod::inCircle(B1.searchByUID(B1.getUIDs()[i]).getPoint(), B2.searchByUID(B2.getUIDs()[j]).getPoint(), rayon_comm)==true)
 			{
 				B1.searchByUID(B1.getUIDs()[i]).addVoisinUID(B1.searchByUID(B1.getUIDs()[i]), B2.getBID(), B2.searchByUID(B2.getUIDs()[j]).getUID());
@@ -513,7 +514,7 @@ void simulation::updateVoisin(base::Base &B1, base::Base &B2)
 void simulation::connexion (base::Base &B1)
 {
 	double startUID = 69420;
-	
+
 	for(unsigned int i = 0; i < B1.getCommunicateurs().size(); i++)
 	{
 		if(geomod::overlap(B1.getPoint(), B1.getCommunicateurs()[i].getPoint()))
@@ -522,11 +523,11 @@ void simulation::connexion (base::Base &B1)
 			break;
 		}
 	}
-	
+
 	for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
 	{
 		B1.searchByUID(B1.getUIDs()[i]).setMode(B1.searchByUID(B1.getUIDs()[i]), 0);
-	}	
+	}
 	subConnexion(B1, startUID);
 }
 
@@ -534,7 +535,7 @@ void simulation::subConnexion(base::Base &B, double uid)
 {
 	if(B.searchByUID(uid).getMode()==0)
 	{
-		B.searchByUID(uid).setMode(B.searchByUID(uid), 1); 
+		B.searchByUID(uid).setMode(B.searchByUID(uid), 1);
 
 		for(unsigned int i = 0; i < B.searchByUID(uid).getVoisinUIDs()[B.getBID()].size(); i++)
 		{
@@ -553,7 +554,7 @@ void simulation::maintenance(base::Base &B1)
 		//	cout<<"Base "<<B1.getBID()<<" ressource: "<<B1.getRessource()<<" -> "<<x<<endl;
 			B1.setRessource(B1, x);
 			x = 0;
-			B1.searchByUID(B1.getUIDs()[i]).setDp(B1.searchByUID(B1.getUIDs()[i]), x); 
+			B1.searchByUID(B1.getUIDs()[i]).setDp(B1.searchByUID(B1.getUIDs()[i]), x);
 		//	cout<<"Robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<": maintained"<<endl;
 		}
 	}
@@ -565,7 +566,7 @@ void simulation::creation(base::Base &B1) //test 1: creation d'un prosp par appe
 	if(B1.getUIDs().size()!=max_robots)
 	{
 		cout<<"creating new prosp"<<endl;
-		
+
 		Robot_Prosp r;
 		r.setPoint(r, B1.getPoint());
 		geomod::Point but;
@@ -614,7 +615,7 @@ double simulation::generateUID(base::Base &B1) //try uids from zero to inf as lo
 {
 	double uid = 0;
 	bool dupli;
-	
+
 	while(dupli == true)
 	{
 		dupli = false;
@@ -625,20 +626,20 @@ double simulation::generateUID(base::Base &B1) //try uids from zero to inf as lo
 				dupli = true;
 			}
 		}
-		
+
 		if(dupli==true)
 		{
 			uid++;
 		}
 	}
-	
+
 	return uid;
 }
 
 void simulation::move(Robot& r) //update position, update dp
 {
 	geomod::Vector optDir(geomod::nVect(r.getPoint(), r.getBut()).x, geomod::nVect(r.getPoint(), r.getBut()).y);
-	
+
 	if(optDir.norm<deltaD)
 	{
 		r.setDp(r, r.getDp()+optDir.norm);
@@ -650,9 +651,9 @@ void simulation::move(Robot& r) //update position, update dp
 		double dx = (deltaD/optDir.norm)*(r.getBut().x-r.getPoint().x);
 		double dy = (deltaD/optDir.norm)*(r.getBut().y-r.getPoint().y);
 		geomod::Point newPoint(r.getPoint().x+dx, r.getPoint().y+dy);
-		
+
 		r.setDp(r, r.getDp()+deltaD);
-		
+
 		r.setPoint(r, newPoint);
 	}
 }
@@ -660,11 +661,11 @@ void simulation::move(Robot& r) //update position, update dp
 void simulation::control(base::Base &B1)
 {
 //	cout << "Base " << B1.getBID() <<":"<<endl;
-	
+
 	for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
 	{
 //		cout << "UIDs["<<i<<"]: "<<B1.getUIDs()[i]<<endl;
 	}
-	
+
 	cout<<endl;
 }

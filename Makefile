@@ -1,5 +1,5 @@
 LDFLAGS := `pkg-config --libs gtkmm-3.0`
-CXXFLAGS := `pkg-config --cflags gtkmm-3.0`
+CXXFLAGS := `pkg-config --cflags gtkmm-3.0` -std=c++11
 
 
 projet: projet.o geomod.o simulation.o message.o base.o gisement.o robot.o gui.o myarea.o Shapes.o

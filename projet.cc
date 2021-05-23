@@ -10,7 +10,7 @@
 
 using namespace std;
 
-
+/*
 int main(int argc, char *argv[])
 {
 	vector<string> argList;
@@ -26,26 +26,24 @@ int main(int argc, char *argv[])
     string s = argList[0];
 
     geomod::setter(dim_max);
-    
-    
+
+
 	simulation::Lecture(s);
 	//cout<<">lecture done"<<endl;
-	
+
 	simulation::sim();
 	cout<<endl;
 	//cout<<">simulation done"<<endl;
-	
-	
-	simulation::Ecriture(s); 
+
+
+	simulation::Ecriture(s);
 	//cout<<">ecriture done"<<endl;
-	
-	
-	
+
 	//cout<<">Uprzejmie informuje, ze program zostal wykonany w calosci."<<endl;
 	return 0;
 }
+*/
 
-/*
 #include "gui.h"
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
@@ -60,5 +58,3 @@ int main(int argc, char** argv)
 
    return app->run(eventWindow);
 }
-
-*/

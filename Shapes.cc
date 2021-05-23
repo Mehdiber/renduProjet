@@ -28,10 +28,7 @@ void Drawable::draw(const Cairo::RefPtr<Cairo::Context> &cr) const
 {
 	cr->set_source_rgb(color.r, color.g, color.b);
 
-	cr->save();
 	draw_shape(cr); // NVI (Non Virtual Interface)
-
-	flush(cr);
 }
 
 void Drawable::flush(const Cairo::RefPtr<Cairo::Context> &cr) const
@@ -42,17 +39,15 @@ void Drawable::flush(const Cairo::RefPtr<Cairo::Context> &cr) const
 		cr->stroke();
 }
 
-#include <iostream>
-#include <iomanip>
 void Circle::draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const
 {
 	cr->arc(coord.xNorm, coord.yNorm, radius, 0, 2 * M_PI);
+	flush(cr);
 
 	bool x;
 	bool y;
 	if (geomod::overlapBorder(coord, radius, x, y))
 	{
-		flush(cr);
 		auto max = geomod::getter_max();
 		double newX = coord.xNorm + 2 * max * (coord.xNorm < 0 ? 1 : -1);
 		double newY = coord.yNorm + 2 * max * (coord.yNorm < 0 ? 1 : -1);
@@ -77,5 +72,6 @@ void Circle::draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const
 
 void Square::draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const
 {
-	cr->rectangle(-size / 2., -size / 2., size, size);
+	cr->rectangle(coord.xNorm, coord.yNorm, size, size);
+	flush(cr);
 }

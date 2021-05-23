@@ -5,6 +5,7 @@
 #include <cairomm/context.h>
 #include <iostream>
 #include "myarea.h"
+#include "simulation.h"
 
 //~ class MyArea : public Gtk::DrawingArea
 //~ {
@@ -47,9 +48,11 @@ protected:
 
 private:
   void draw();
+  void load_simulation();
 
   bool start_sim{false};
 
+  varglo data;
   geomod::Point pt;
   double r;
 };

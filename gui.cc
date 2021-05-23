@@ -65,10 +65,6 @@ MyEvent::MyEvent() : Box(Gtk::ORIENTATION_VERTICAL, 10),
 	m_Box_Top.pack_start(canvas);
 	canvas.setFrame(ref);
 	canvas.set_size_request(taille_dessin, taille_dessin);
-	canvas.queue_draw();
-
-	pt = geomod::Point(0, 0);
-	r = 50;
 
 	Glib::signal_idle().connect(sigc::mem_fun(*this, &MyEvent::on_idle));
 
@@ -81,11 +77,21 @@ MyEvent::~MyEvent()
 
 void MyEvent::open_handler()
 {
-	std::cout << "test" << std::endl;
+	Gtk::FileChooserDialog chooser("Ouvrir un fichier de simulation", Gtk::FILE_CHOOSER_ACTION_OPEN);
+	chooser.set_transient_for(*this);
+
+	chooser.add_button("_Annuler", Gtk::RESPONSE_CANCEL);
+	chooser.add_button("_Ouvrir", Gtk::RESPONSE_OK);
+
+	if (chooser.run() == Gtk::RESPONSE_OK)
+	{
+		data = simulation::Lecture(chooser.get_filename());
+		load_simulation();
+	}
 }
 void MyEvent::exit_handler()
 {
-	std::cout << "test" << std::endl;
+	::exit(EXIT_SUCCESS);
 }
 void MyEvent::start_handler()
 {
@@ -93,7 +99,7 @@ void MyEvent::start_handler()
 }
 void MyEvent::step_handler()
 {
-	std::cout << "test" << std::endl;
+	load_simulation();
 }
 void MyEvent::t_link_handler()
 {
@@ -107,17 +113,40 @@ void MyEvent::t_range_handler()
 bool MyEvent::on_idle()
 {
 	if (start_sim)
-	{
-		pt.xNorm = dim_max;
-		pt.yNorm = dim_max;
-		geomod::normalizePoint(pt);
-
-		canvas.add(new Circle(pt, Color{0, 1, 0}, r, true));
-		canvas.queue_draw();
-
-		usleep(100000);
-	}
+		step_handler();
 	return is_visible();
+}
+
+void MyEvent::load_simulation()
+{
+	std::vector<Color> colors{red, green, blue, yellow, magenta, cyan};
+	Color black{};
+
+	for (int i = 0; i < data.Bases.size(); i++)
+	{
+		Color col = colors[i % 6];
+		const auto & base = data.Bases[i];
+
+		canvas.add(new Circle(base.getPoint(), col, rayon_base * 10, true));
+
+		auto prospecteurs = base.getProspecteurs();
+		auto foreurs = base.getForeurs();
+		auto transporteurs = base.getTransporteurs();
+		auto communicateurs = base.getCommunicateurs();
+		double size = 7;
+
+		for (const auto &prospecteur : prospecteurs)
+			canvas.add(new Square(prospecteur.getPoint(), col, size));
+		for (const auto &foreur : foreurs)
+			canvas.add(new Square(foreur.getPoint(), col, size));
+		for (const auto &transporteur : transporteurs)
+			canvas.add(new Square(transporteur.getPoint(), col, size));
+		for (const auto &communicateur : communicateurs)
+			canvas.add(new Square(communicateur.getPoint(), col, size));
+	}
+
+	for (const auto& gisement : data.Gisements)
+		canvas.add(new Circle(gisement.getPoint(), black, gisement.getRayon(), true));
 }
 
 //~ void Myevent::open_handler
