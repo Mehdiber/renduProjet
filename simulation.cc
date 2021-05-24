@@ -999,8 +999,8 @@ void simulation::move(Robot& r) //update position, update dp
 		//r.setAtteint(r, true);
 		cout<<"Robot Prosp "<<r.getUID()<<" stopped - lack of fuel"<<endl;
 	}
-	else if(r.getBut().x+optDir.x<dim_max||r.getBut().x+optDir.x>dim_max|
-			|r.getBut().y+optDir.y<dim_max||r.getBut().y+optDir.y>dim_max) //case: il faut reboucler pour atteidre le but
+	else if(r.getBut().x+optDir.x<dim_max||r.getBut().x+optDir.x>dim_max||
+		r.getBut().y+optDir.y<dim_max||r.getBut().y+optDir.y>dim_max) //case: il faut reboucler pour atteidre le but
 	{
 		geomod::Point butReb(r.getPoint().x+optDir.x, r.getPoint().y+optDir.y);
 		
