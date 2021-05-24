@@ -53,13 +53,25 @@ private:
 class Square : public Drawable
 {
 public:
-	Square(const geomod::Point &pt, Color color, double s);
+	Square(const geomod::Point &pt, Color color, double s, bool f);
 	virtual ~Square();
 
 	virtual void draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const override;
 
 private:
 	double size;
+};
+
+class Line : public Drawable
+{
+public:
+	Line(const geomod::Point &A, const geomod::Point &B, Color color);
+	virtual ~Line();
+
+	virtual void draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const override;
+
+private:
+	geomod::Point b;
 };
 
 typedef std::unique_ptr<Drawable> DrawablePtr;
