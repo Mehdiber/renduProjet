@@ -29,15 +29,15 @@ int main(int argc, char *argv[])
     
     
 	simulation::Lecture(s);
-	//cout<<">lecture done"<<endl;
+	cout<<">lecture done"<<endl;
 	
 	simulation::sim();
 	cout<<endl;
-	//cout<<">simulation done"<<endl;
+	cout<<">simulation done"<<endl;
 	
 	
 	simulation::Ecriture(s); 
-	//cout<<">ecriture done"<<endl;
+	cout<<">ecriture done"<<endl;
 	
 	
 	
@@ -52,11 +52,11 @@ int main(int argc, char *argv[])
 
 int main(int argc, char** argv)
 {
-   geomod::setter(dim_max);
-
    auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
 
    MyEvent eventWindow;
+   eventWindow.set_default_size(300, 200);
+   eventWindow.set_resizable(false);
 
    return app->run(eventWindow);
 }

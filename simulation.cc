@@ -438,19 +438,19 @@ std::string simulation::to_string(bool arg1)
 		return "true";
 }
 
-void simulation::sim() //theoriquement au lieu de abc ca doit etre Bases.
+void simulation::sim()
 {
 	cout<<endl;
 	for(unsigned int i = 0; i < abc.Bases.size(); i++)
 	{
 		for(unsigned int j = 0; j < abc.Bases.size(); j++)
 		{
-			updateVoisin(abc.Bases[i], abc.Bases[j]); //OK
+			updateVoisin(abc.Bases[i], abc.Bases[j]);
 		}
 		
-	simulation::connexion(abc.Bases[i]); //OK
-	simulation::maintenance(abc.Bases[i]);    
-	simulation::creation(abc.Bases[i]);   
+	simulation::connexion(abc.Bases[i]);
+	simulation::maintenance(abc.Bases[i]);
+	//simulation::creation(abc.Bases[i]);   
 	simulation::updateRemote(abc.Bases[i]); 
 	simulation::updateAutonomous(abc.Bases[i]); 
 	}
@@ -550,38 +550,309 @@ void simulation::maintenance(base::Base &B1)
 		if(geomod::overlap(B1.searchByUID(B1.getUIDs()[i]).getPoint(), B1.getPoint())&&B1.searchByUID(B1.getUIDs()[i]).getDp()!=0)
 		{
 			double x = B1.getRessource()-cost_repair*B1.searchByUID(B1.getUIDs()[i]).getDp();
-		//	cout<<"Base "<<B1.getBID()<<" ressource: "<<B1.getRessource()<<" -> "<<x<<endl;
+			cout<<"Base "<<B1.getBID()<<" ressource: "<<B1.getRessource()<<" -> "<<x<<endl;
 			B1.setRessource(B1, x);
 			x = 0;
 			B1.searchByUID(B1.getUIDs()[i]).setDp(B1.searchByUID(B1.getUIDs()[i]), x); 
-		//	cout<<"Robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<": maintained"<<endl;
+			cout<<"Robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<": maintained"<<endl;
 		}
 	}
 }
 
-void simulation::creation(base::Base &B1) //test 1: creation d'un prosp par appel
+void simulation::creation(base::Base &B1) //erreur avec detection
 {
-	/*
-	if(B1.getUIDs().size()!=max_robots)
+	if(B1.getSimStage()!=0&&B1.getSimStage()!=1&&B1.getSimStage()!=2&&B1.getSimStage()!=3)
 	{
-		cout<<"creating new prosp"<<endl;
-		
-		Robot_Prosp r;
-		r.setPoint(r, B1.getPoint());
-		geomod::Point but;
-		but.x = B1.getPoint().x;
-		but.y = B1.getPoint().y+100; //pour qu'ils se dirigent vers le nord;
-		r.setBut(r, but);
-		r.setUID(r, generateUID(B1));
-		r.setDp(r, 0);
-		r.setAtteint(r, false);
-		r.setMode(r, 0); //upon creation: auto
-		r.setInRange(r, false);
-		r.setRetour(r, false);
-		r.setFound(r, false);
-		//faire des conctructeurs neat pour ca s'il reste un peu de temps
+		cout<<"setting simstage to 0"<<endl;
+		B1.setSimStage(B1, 0);
 	}
-	* */
+	
+		if(B1.getSimStage()==0) //creation des 49 comms pour faire un reseau
+		{
+			if(B1.getCommunicateurs().size()<49)
+			{/*
+				for(int i = 0; i < 7; i++)
+				{
+					for(int j = 0; j < 7; j++)
+					{
+						Robot_Com r;
+						r.setPoint(r, B1.getPoint());
+						geomod::Point p(B1.getPoint().x+i*2*dim_max/7, B1.getPoint().y+j*2*dim_max/7);
+						geomod::normalizePoint(p);
+						geomod::Point p2(p.xNorm, p.yNorm);
+						r.setBut(r, p2);
+						double uid = generateUID(B1);
+						r.setUID(r, uid);
+						r.setDp(r, 0);
+						r.setAtteint(r, false);
+						r.setMode(r, 1);
+						r.setInRange(r, false);
+						
+						if(geomod::overlap(B1.getPoint(), p2)==false) //pour pas doubler un comm au centre de la base
+						{
+							B1.setRessource(B1, B1.getRessource()-cost_com);
+							B1.add_communicateur(r);
+							B1.add_UID(uid);
+							cout<<"communicateur added"<<endl;
+						}
+					}
+				}*/
+			}
+			
+			
+			B1.setReseauDone(B1, true);
+			for(unsigned int i = 0; i < B1.getCommunicateurs().size(); i++)
+			{
+				if(B1.getCommunicateurs()[i].getAtteint()==false)
+				{
+					B1.setReseauDone(B1, false);
+					cout<<"Robot: "<<B1.getCommunicateurs()[i].getUID()<<" not atteint yet"<<endl;
+				}
+			}
+			if(B1.getReseauDone()==true)
+			{
+				cout<<"setting simstage to 1"<<endl;
+				B1.setSimStage(B1, 1);
+			}
+		}
+		
+		if(B1.getSimStage()==1)
+		{
+			
+			//if(aucune autre base n'est en train de prospecter)
+			bool unique = true;
+			bool isActive = false;
+			bool isProspecting = false;
+			bool isReplacing = false; //when dead
+			bool isSending = false; //when found
+			double pUID;
+			bool onLine = false; 
+			bool onCol = false;
+			double aUid = 69420; //uid du robot le plus avance
+			//int modulo;
+			
+			
+			
+			
+			
+			for(unsigned int i = 0; i < abc.Bases.size(); i++)
+			{
+				if(abc.Bases[i].getBID() != B1.getBID())
+				{
+					for(unsigned int j = 0; j < abc.Bases[i].getProspecteurs().size(); j++)
+					{
+						if(abc.Bases[i].getProspecteurs()[j].getAtteint() == false)
+						{
+							unique = false; //il y a deja une autre base qui prospect
+						}
+					}
+				}
+			}
+			
+			if(unique == true)
+			{
+				//decision si replacing:
+				
+				//alors la base prospect.
+				cout<<"Base "<<B1.getBID()<<": unique true"<<endl;
+			
+				double xCheck = 0;
+				double yCheck = 0;
+				double currentxCheck = B1.getPoint().x;
+				double currentyCheck = B1.getPoint().y;
+				
+				//////////////////
+				
+				/*
+				for(unsigned int i = 0; i < B1.getProspecteurs().size(); i++)
+				{
+					if(B1.getProspecteurs()[i].getDp() != maxD_prosp)
+					{
+						xCheck = B1.getProspecteurs()[i].getPoint().x;
+						yCheck = B1.getProspecteurs()[i].getPoint().y;
+				
+						if(yCheck>B1.getPoint().y)
+						{
+							yCheck -= dim_max*2;
+						}
+					
+						if(yCheck==currentyCheck)
+						{
+							if(xCheck<B1.getPoint().x)
+							{
+								xCheck += dim_max*2;
+							}
+			
+							if(xCheck>currentxCheck)
+							{
+								currentxCheck = xCheck;
+								aUid = B1.getProspecteurs()[i].getUID();
+							}
+						}
+		
+						if(yCheck<currentyCheck)
+						{
+							currentyCheck = yCheck;
+							aUid = B1.getProspecteurs()[i].getUID();
+						}
+					}
+				}	
+				
+				cout<<"aUid = "<<aUid<<endl; //CA CALCULE BIEN?
+				* 
+				*/
+				
+				///////////////////////
+				
+				if(B1.getProspecteurs().size()!=0)
+				{
+					if(B1.searchByUID(aUid).getDp()==maxD_prosp)
+					{
+						isReplacing = true; //case if the replacing one reaches?
+					}
+					//if(isReplacing = false)
+					for(unsigned int i = 0; i < B1.getProspecteurs().size(); i++)
+					{
+						if(B1.getProspecteurs()[i].getDp()>maxD_prosp)
+						{
+							//cout<<"setting isprospecting true"<<endl;
+							isProspecting = true;
+							pUID = B1.getProspecteurs()[i].getUID();
+						}
+					}
+				}
+				
+				if(B1.getProspecteurs().size()!=0)
+				{
+					for(unsigned int i = 0; i < B1.getProspecteurs().size(); i++)
+					{
+						
+					}
+				}
+				
+				
+				if(isProspecting == true)
+				{
+					//if(theres a found)
+					
+					//else if(theres a dead)
+					
+					
+					double y = B1.getPoint().y;
+					
+					while(y >= 100 || y <= -100)
+					{
+						if(y >= 100)
+							y-=100;
+						if(y <= -100)
+							y+=100;
+					}
+					//cout<<" 'normalized' y: "<<y<<endl;
+					
+					for(int i = 0; i < dim_max/(rayon_min*2); i++)
+					{
+						if((y+i*100-1000)==B1.searchByUID(pUID).getPoint().y)
+						{
+							onLine = true;
+							//modulo = i%2;
+						}
+					}
+					
+					if(B1.searchByUID(pUID).getPoint().x == B1.getPoint().x)
+					{
+						onCol = true;	
+					}
+					
+					if(onLine == false)
+					{
+						cout<<"online false"<<endl;
+						if(onCol == true)
+						{
+							cout<<"oncol true"<<endl;
+							geomod::Point p;
+							p.x = B1.searchByUID(pUID).getPoint().x;
+							p.y = B1.searchByUID(pUID).getPoint().y-5;
+							B1.searchByUID(pUID).setBut(B1.searchByUID(pUID), p);
+						}
+					}
+					else //online == true
+					{
+						cout<<"online"<<endl;
+						geomod::Point p1;
+						p1.x = B1.getPoint().x-5;
+						p1.y = B1.searchByUID(pUID).getPoint().y;
+						cout<<"p1: "<<p1.x<<" "<<p1.y<<endl;
+						geomod::Point p2;
+						p2.x = p1.x+2.5;
+						p2.y = p1.y-2.5;
+						geomod::Point p3;
+						p2.x = p1.x+5;
+						p2.y = p1.y-5;
+						
+						if(B1.searchByUID(pUID).getPoint().x==B1.getPoint().x) //on column
+						{
+							cout<<"on column"<<endl;
+							geomod::Point p;
+							p.x = B1.searchByUID(pUID).getPoint().x+5;
+							p.y = B1.searchByUID(pUID).getPoint().y;
+							
+							B1.searchByUID(pUID).setBut(B1.searchByUID(pUID), p);
+						}
+						else if(geomod::overlap(B1.searchByUID(pUID).getPoint(), p1)==true)
+						{
+							cout<<"p1 -> p2"<<endl;
+							B1.searchByUID(pUID).setBut(B1.searchByUID(pUID), p2);
+						}
+						else if(geomod::overlap(B1.searchByUID(pUID).getPoint(), p2)==true)
+						{
+							cout<<"p2 -> p3"<<endl;
+							B1.searchByUID(pUID).setBut(B1.searchByUID(pUID), p3);
+						}
+						else
+						{
+							geomod::Point pr;
+							pr.x = B1.searchByUID(pUID).getPoint().x+5;
+							pr.y = B1.searchByUID(pUID).getPoint().y;
+							B1.searchByUID(pUID).setBut(B1.searchByUID(pUID), pr);
+						}
+						cout<<"nuthin' "<<endl;
+					}
+				}
+				
+				else if(isProspecting == false)
+				{
+					Robot_Prosp r;
+					r.setPoint(r, B1.getPoint());
+					geomod::Point but;
+					but.x = B1.getPoint().x;
+					but.y = B1.getPoint().y; 
+					r.setBut(r, but);
+					geomod::Point pp;
+					pp.x = B1.getPoint().x;
+					pp.y = B1.getPoint().y; 
+					
+					//^^a optimiser
+					r.setUID(r, generateUID(B1));
+					r.setDp(r, 0);
+					r.setAtteint(r, false);
+					r.setMode(r, 0); //upon creation: auto
+					r.setInRange(r, false);
+					r.setRetour(r, false);
+					r.setFound(r, false);
+					B1.add_prospecteur(r);
+					//cout<<"prosp created"<<endl;
+					//cout<<"calling but created "<<r.getBut().x<<" "<<r.getBut().y<<" "<<endl;
+				}
+			}
+			else
+				cout<<"unique false"<<endl;
+			
+		}
+		
+		if(B1.getSimStage()==2) //extraction!
+		{
+			
+		}
 }
 
 void simulation::updateRemote(base::Base &B1)
@@ -590,9 +861,10 @@ void simulation::updateRemote(base::Base &B1)
 	{
 		if(B1.searchByUID(B1.getUIDs()[i]).getMode()==1&&geomod::overlap(B1.searchByUID(B1.getUIDs()[i]).getPoint(),B1.searchByUID(B1.getUIDs()[i]).getBut())==false)
 		{
-		//	cout<<"remote robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<" updated from ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y;
+			//cout<<"PP: "<<B1.searchByUID(B1.getUIDs()[i]).getPP().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPP().y<<endl;
+			//cout<<"remote robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<" updated from ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y;
 			move(B1.searchByUID(B1.getUIDs()[i]));
-		//	cout<<") to ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y<<") new dp: "<<B1.searchByUID(B1.getUIDs()[i]).getDp()<<endl;
+			//cout<<") to ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y<<") new dp: "<<B1.searchByUID(B1.getUIDs()[i]).getDp()<<endl;
 		}
 	}
 }
@@ -603,9 +875,9 @@ void simulation::updateAutonomous(base::Base &B1)
 	{
 		if(B1.searchByUID(B1.getUIDs()[i]).getMode()==0&&geomod::overlap(B1.searchByUID(B1.getUIDs()[i]).getPoint(),B1.searchByUID(B1.getUIDs()[i]).getBut())==false)
 		{
-		//	cout<<"autonomous robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<" updated from ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y;
+			//cout<<"autonomous robot "<<B1.searchByUID(B1.getUIDs()[i]).getUID()<<" updated from ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y;
 			move(B1.searchByUID(B1.getUIDs()[i]));
-		//	cout<<") to ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y<<") new dp: "<<B1.searchByUID(B1.getUIDs()[i]).getDp()<<endl;
+			//cout<<") to ("<<B1.searchByUID(B1.getUIDs()[i]).getPoint().x<<", "<<B1.searchByUID(B1.getUIDs()[i]).getPoint().y<<") new dp: "<<B1.searchByUID(B1.getUIDs()[i]).getDp()<<endl;
 		}
 	}
 }
@@ -613,13 +885,15 @@ void simulation::updateAutonomous(base::Base &B1)
 double simulation::generateUID(base::Base &B1) //try uids from zero to inf as long as theres no such uid in B1.UIDs
 {
 	double uid = 0;
-	bool dupli;
+	bool dupli = true;
 	
 	while(dupli == true)
 	{
 		dupli = false;
 		for(unsigned int i = 0; i < B1.getUIDs().size(); i++)
 		{
+			//cout<<"uids.size"<<B1.getUIDs().size()<<endl;
+			//cout<<"flag "<<uid<<" "<<B1.getUIDs()[i]<<endl;
 			if(uid == B1.getUIDs()[i])
 			{
 				dupli = true;
@@ -631,30 +905,52 @@ double simulation::generateUID(base::Base &B1) //try uids from zero to inf as lo
 			uid++;
 		}
 	}
-	
+	//cout<<"generated UID: "<<uid<<endl;
 	return uid;
 }
 
 void simulation::move(Robot& r) //update position, update dp
 {
 	geomod::Vector optDir(geomod::nVect(r.getPoint(), r.getBut()).x, geomod::nVect(r.getPoint(), r.getBut()).y);
-	
-	if(optDir.norm<deltaD)
+	//cout<<"[[VECTOR: "<<optDir.x<<" "<<optDir.y<<"]]"<<endl;
+		
+	cout<<"move from "<<r.getPoint().x<<", "<<r.getPoint().y;
+	if(optDir.norm<deltaD) //case: tres proche du but
 	{
 		r.setDp(r, r.getDp()+optDir.norm);
 		r.setPoint(r, r.getBut());
-		r.setAtteint(r, true);
+		r.setDp(r, maxD_prosp);
+		//r.setAtteint(r, true);
+		cout<<"Robot Prosp "<<r.getUID()<<" stopped - lack of fuel"<<endl;
 	}
-	else
+	else if(r.getBut().x+optDir.x<dim_max||r.getBut().x+optDir.x>dim_max||r.getBut().y+optDir.y<dim_max||r.getBut().y+optDir.y>dim_max) //case: il faut reboucler pour atteidre le but
+	{
+		geomod::Point butReb(r.getPoint().x+optDir.x, r.getPoint().y+optDir.y);
+		
+		double dx = (deltaD/optDir.norm)*(butReb.x-r.getPoint().x);
+		double dy = (deltaD/optDir.norm)*(butReb.y-r.getPoint().y);
+		geomod::Point newPoint(r.getPoint().x+dx, r.getPoint().y+dy);
+		
+		r.setDp(r, r.getDp()+deltaD);
+		r.setPoint(r, newPoint);
+	}
+	else //case: pas de rebouclement
 	{
 		double dx = (deltaD/optDir.norm)*(r.getBut().x-r.getPoint().x);
 		double dy = (deltaD/optDir.norm)*(r.getBut().y-r.getPoint().y);
 		geomod::Point newPoint(r.getPoint().x+dx, r.getPoint().y+dy);
 		
 		r.setDp(r, r.getDp()+deltaD);
-		
 		r.setPoint(r, newPoint);
-	}
+	} 
+	
+	geomod::Point P1(r.getPoint().x, r.getPoint().y);
+	geomod::normalizePoint(P1);
+	geomod::Point P2(P1.xNorm, P1.yNorm);
+	r.setPoint(r, P2);
+	cout<<" to "<<r.getPoint().x<<", "<<r.getPoint().y<<endl;
+	
+	
 }
 
 void simulation::control(base::Base &B1)

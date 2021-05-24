@@ -22,7 +22,6 @@ class Robot
 	public :
 		geomod::Point getPoint() const;
 		void setPoint(Robot& r, geomod::Point arg1) const;
-		
 		geomod::Point getBut() const;
 		void setBut(Robot& r, geomod::Point arg1) const;
 		double getUID() const;
@@ -42,6 +41,8 @@ class Robot
 		bool getInRange() const;
 		
 		void showVoisins() const;
+		
+		
 		
 };
 

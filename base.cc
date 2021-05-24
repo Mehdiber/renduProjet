@@ -69,7 +69,6 @@ void base::Base::add_foreur(const Robot_For &foreur)
 }
 geomod::Point base::Base::getPoint() const
 {
-
 	return p;
 }
 
@@ -198,31 +197,74 @@ Robot& base::Base::searchByUID(double uid)
 		if(communicateurs[i].getUID()==uid)
 			return communicateurs[i];
 }
-/*
-std::ostream &operator<<(std::ostream &os, const base::Base &base)
+
+int base::Base::getSimStage() const
 {
-	os << base.p.x << " ";
-	os << base.p.y << " ";
-	//os << base.ressource << " "; TODO: faire l'affichage des ressources
-
-	auto prospecteurs = base.getProspecteurs();
-	auto communicateurs = base.getCommunicateurs();
-	auto foreurs = base.getForeurs();
-	auto transporteurs = base.getTransporteurs();
-
-	os << prospecteurs.size() << " ";
-	os << foreurs.size() << " ";
-	os << transporteurs.size() << " ";
-	os << communicateurs.size() << "\n";
-
-	for (const auto& prosp : prospecteurs)
-		os << prosp;
-	for (const auto& foreur : foreurs)
-		os << foreur;
-	for (const auto& transporteur : transporteurs)
-		os << transporteur;
-	for (const auto& communicateur : communicateurs)
-		os << communicateur;
-	return os;
+	return simStage;
 }
+
+void base::Base::setSimStage(Base& b, int arg1) const
+{
+	b.simStage = arg1;
+}
+
+bool base::Base::getReseauStarted() const
+{
+	return reseauStarted;
+}
+void base::Base::setReseauStarted(Base& b, bool arg1) const
+{
+	b.reseauStarted = arg1;	
+}
+
+bool base::Base::getReseauDone() const
+{
+	return reseauDone;
+}
+void base::Base::setReseauDone(Base& b, bool arg1) const
+{
+	b.reseauDone = arg1;
+}
+/*
+double base::Base::uidAv(std::vector<Robot_Prosp> prosps) const //uid du prosp le plus "avance"
+{
+	double uid = 69420;
+	double xCheck = 0;
+	double yCheck = 0;
+	double currentxCheck = p.x;
+	double currentyCheck = p.y;
+	for(unsigned int i = 0; i < prosps.size(); i++)
+	{
+		xCheck = prospecteurs.p.x;
+		yCheck = prospecteurs.p.y;
+		
+		if(prospecteurs[i].p.y>p.y)
+		{
+			yCheck -= dim_max*2;
+		}
+		
+		if(yCheck==currentyCheck)
+		{
+			if(prospecteurs[i].p.x<p.x)
+			{
+				xCheck += dim_max*2;
+			}
+			
+			if(xCheck>currentxCheck)
+			{
+				currentxCheck = xCheck;
+				uid = prospecteurs[i].getUID();
+			}
+		}
+		
+		if(yCheck<currentyCheck)
+		{
+			currentyCheck = yCheck;
+			uid = prospecteurs[i].getUID();
+		}
+	}
+	
+	return uid;
+}
+
 */

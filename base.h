@@ -26,6 +26,11 @@ namespace base
 			
 			std::vector<std::vector<double> >connectionStatus; //premiere coordonnee: uid du robot, deuxieme: 0 si pas connecte, 1 si connecte.
 			
+			int simStage; //0: creation du reseau des comms, 1: prospection, 2: decision quelles bases meurent, repartissement des gisements, extraction;
+			
+			bool reseauStarted;
+			bool reseauDone;
+			
 		public:
 			Base(const geomod::Point& coord);
 			
@@ -60,7 +65,16 @@ namespace base
 			
 			Robot& searchByUID(double uid);
 			
+			int getSimStage() const;
+			void setSimStage(Base& b, int arg1) const;
 			
+			bool getReseauStarted() const;
+			void setReseauStarted(Base& b, bool arg1) const;
+			bool getReseauDone() const;
+			void setReseauDone(Base& b, bool arg1) const;
+			
+			//double uidAv() const;
+			double uidAv(std::vector<Robot_Prosp> prosps) const;
 	};
 }
 
