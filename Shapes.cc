@@ -16,7 +16,7 @@ Circle::~Circle()
 {
 }
 
-Square::Square(const geomod::Point &pt, Color c, double s) : Drawable(pt, c, true), size(s)
+Square::Square(const geomod::Point &pt, Color c, double s, bool f) : Drawable(pt, c, f), size(s)
 {
 }
 
@@ -74,4 +74,25 @@ void Square::draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const
 {
 	cr->rectangle(coord.xNorm, coord.yNorm, size, size);
 	flush(cr);
+}
+
+Line::Line(const geomod::Point &A, const geomod::Point &B, Color color) : Drawable(A, color, false), b(B)
+{
+}
+
+Line::~Line()
+{
+}
+
+void Line::draw_shape(const Cairo::RefPtr<Cairo::Context> &cr) const
+{
+	geomod::Vector vect;
+	double norm = geomod::vectorNorm(vect, coord, b);
+
+	if (norm <= rayon_comm)
+	{
+		cr->move_to(coord.xNorm, coord.yNorm);
+		cr->line_to(b.xNorm, b.yNorm);
+		cr->stroke();
+	}
 }

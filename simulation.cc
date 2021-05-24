@@ -14,7 +14,12 @@ using namespace std;
 
 varglo abc;
 
-varglo simulation::Lecture(const std::string &filename)
+varglo simulation::getterVarglo()
+{
+	return abc;
+}
+
+void simulation::Lecture(const std::string &filename)
 {
 	abc.mode = 0;
 
@@ -47,8 +52,6 @@ varglo simulation::Lecture(const std::string &filename)
 	}
 	else
 		cout << "error reading file" << endl;
-
-	return abc;
 }
 
 void simulation::Ecriture(const std::string &filename)

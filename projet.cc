@@ -48,13 +48,13 @@ int main(int argc, char *argv[])
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-   geomod::setter(dim_max);
+	geomod::setter(dim_max);
 
-   auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
+	auto app = Gtk::Application::create("org.gtkmm.example");
 
-   MyEvent eventWindow;
+	MyEvent eventWindow(argc, argv);
 
-   return app->run(eventWindow);
+	return app->run(eventWindow);
 }

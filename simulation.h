@@ -27,7 +27,8 @@ struct varglo
 
 namespace simulation
 {
-	varglo Lecture(const std::string &filename);
+	varglo getterVarglo();
+	void Lecture(const std::string &filename);
 	void Ecriture(const std::string &filename); ///-------------------------
 
 	void assignLine(varglo& abc, std::vector<std::string>m);

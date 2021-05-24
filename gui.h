@@ -24,10 +24,33 @@
 //~ void refresh();
 //~ };
 
+class Model_columns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+  Model_columns()
+  {
+    add(_col_id);
+    add(_col_nbP);
+    add(_col_nbF);
+    add(_col_nbT);
+    add(_col_nbC);
+    add(_col_resource);
+    add(_col_resource_percentage);
+  }
+
+  Gtk::TreeModelColumn<int> _col_id;
+  Gtk::TreeModelColumn<int> _col_nbP;
+  Gtk::TreeModelColumn<int> _col_nbF;
+  Gtk::TreeModelColumn<int> _col_nbT;
+  Gtk::TreeModelColumn<int> _col_nbC;
+  Gtk::TreeModelColumn<double> _col_resource;
+  Gtk::TreeModelColumn<int> _col_resource_percentage;
+};
+
 class MyEvent : public Gtk::Window
 {
 public:
-  MyEvent();
+  MyEvent(int ac, char **av);
   virtual ~MyEvent();
 
 protected:
@@ -35,6 +58,7 @@ protected:
   void open_handler();
   void start_handler();
   void step_handler();
+  void save_handler();
   void t_link_handler();
   void t_range_handler();
   bool on_idle();
@@ -46,15 +70,22 @@ protected:
   Gtk::ToggleButton t_link, t_range;
   MyArea canvas;
 
+  Gtk::ScrolledWindow _scrolled_window;
+  Gtk::TreeView _tree_view;
+  Model_columns _columns;
+
 private:
   void draw();
   void load_simulation();
+  void load_ranges();
+  void load_links();
+  void tree_view_update();
 
   bool start_sim{false};
+  bool range{false};
+  bool link{false};
 
   varglo data;
-  geomod::Point pt;
-  double r;
 };
 
 #endif // GTKMM_EXAMPLE_MYEVENT_H
